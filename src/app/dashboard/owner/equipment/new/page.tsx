@@ -12,50 +12,57 @@ import {
   Image as ImageIcon,
   CheckCircle2,
   Trash2,
+  FileText,
+  Clock,
+  ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { fetchApi } from "@/lib/api";
 import { toast } from "sonner";
 
 const CATEGORIES = [
+  "Construction Equipment",
+  "Photography Equipment",
+  "Vehicles & Transportation",
+  "Agriculture Equipment",
+  "Electronics",
+  "Event Equipment",
   "Heavy Machinery",
-  "Construction",
   "Power Tools",
   "Material Handling",
-  "Landscaping & Gardening",
-  "Generators & Power",
-  "Audio/Visual & Event Tech",
   "Cleaning & Restoration",
 ];
 
+const RENTAL_TYPES = ["Daily", "Weekly", "Monthly"];
 const CONDITIONS = ["Brand New", "Excellent", "Good", "Fair"];
 
 export default function NewEquipmentPage() {
   const router = useRouter();
 
-  const [title, setTitle] = React.useState("");
-  const [category, setCategory] = React.useState("Heavy Machinery");
+  // Assignment mandatory fields
+  const [equipmentName, setEquipmentName] = React.useState("");
   const [description, setDescription] = React.useState("");
-  const [pricePerDay, setPricePerDay] = React.useState("");
-  const [securityDeposit, setSecurityDeposit] = React.useState("");
-  const [condition, setCondition] = React.useState("Excellent");
+  const [category, setCategory] = React.useState("Construction Equipment");
   const [city, setCity] = React.useState("Austin");
   const [state, setState] = React.useState("TX");
-  const [address, setAddress] = React.useState("Main Fleet Yard");
+  const [address, setAddress] = React.useState("742 Fleet Yard Ave");
+  const [rentalPrice, setRentalPrice] = React.useState("");
+  const [rentalType, setRentalType] = React.useState("Daily");
+  const [availableQuantity, setAvailableQuantity] = React.useState("1");
+  const [condition, setCondition] = React.useState("Excellent");
+  const [brand, setBrand] = React.useState("Caterpillar");
+  const [model, setModel] = React.useState("CAT-305E");
+  const [rentalTerms, setRentalTerms] = React.useState(
+    "Standard commercial rental terms apply. Valid operator certification and security deposit required upon delivery. Unit must be returned cleaned and fueled."
+  );
 
   // Images state
   const [imageUrl, setImageUrl] = React.useState("");
   const [images, setImages] = React.useState<string[]>([
     "https://images.unsplash.com/photo-1579847188804-ecba0e2ea330?auto=format&fit=crop&w=800&q=80",
-  ]);
-
-  // Specifications state
-  const [specs, setSpecs] = React.useState<Array<{ key: string; value: string }>>([
-    { key: "Brand", value: "Caterpillar" },
-    { key: "Model", value: "305.5E2" },
-    { key: "Fuel Type", value: "Diesel" },
   ]);
 
   const [loading, setLoading] = React.useState(false);
@@ -70,56 +77,45 @@ export default function NewEquipmentPage() {
     setImages(images.filter((_, i) => i !== index));
   };
 
-  const addSpec = () => {
-    setSpecs([...specs, { key: "", value: "" }]);
-  };
-
-  const updateSpec = (index: number, field: "key" | "value", val: string) => {
-    const updated = [...specs];
-    updated[index][field] = val;
-    setSpecs(updated);
-  };
-
-  const removeSpec = (index: number) => {
-    setSpecs(specs.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !pricePerDay) {
-      toast.error("Please fill in the equipment title and daily rental rate");
+    if (!equipmentName.trim() || !rentalPrice) {
+      toast.error("Please enter the Equipment Name and Rental Price");
       return;
     }
-
-    const specificationsObj: Record<string, string> = {};
-    specs.forEach((s) => {
-      if (s.key.trim() && s.value.trim()) {
-        specificationsObj[s.key.trim()] = s.value.trim();
-      }
-    });
 
     try {
       setLoading(true);
       await fetchApi("/equipment", {
         method: "POST",
         body: JSON.stringify({
-          title: title.trim(),
+          title: equipmentName.trim(),
+          equipmentName: equipmentName.trim(),
           category,
           description: description.trim(),
-          pricePerDay: Number(pricePerDay),
-          securityDeposit: Number(securityDeposit || 0),
+          rentalPrice: Number(rentalPrice),
+          pricePerDay: Number(rentalPrice),
+          rentalType,
+          availableQuantity: Number(availableQuantity || 1),
           condition,
-          location: { city, state, address },
+          brand: brand.trim(),
+          model: model.trim(),
+          location: {
+            city: city.trim(),
+            state: state.trim(),
+            address: address.trim(),
+          },
           images,
-          specifications: specificationsObj,
+          rentalTerms: rentalTerms.trim(),
+          status: "Pending", // Default pending per assignment
           availability: true,
         }),
       });
 
-      toast.success("Equipment successfully added to your fleet!");
+      toast.success("Equipment submitted! It is now pending administrator review.");
       router.push("/dashboard/owner/equipment");
     } catch (err: any) {
-      toast.error(err.message || "Failed to create equipment listing");
+      toast.error(err.message || "Failed to list equipment");
     } finally {
       setLoading(false);
     }
@@ -139,28 +135,45 @@ export default function NewEquipmentPage() {
             Fleet Expansion
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-            List New Equipment
+            Add Equipment
           </h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            List equipment for rent with comprehensive specifications, pricing terms, and photos.
+          </p>
         </div>
       </div>
 
+      {/* Moderation Notice Badge */}
+      <div className="p-3.5 rounded-xl border border-amber/30 bg-amber/10 flex items-center justify-between gap-3 text-xs text-foreground">
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4 text-amber shrink-0" />
+          <span>
+            <strong>Status Notice:</strong> All newly added equipment will be marked as{" "}
+            <span className="font-bold text-amber">Pending</span> until approved by platform administrators.
+          </span>
+        </div>
+        <Badge variant="amber" className="text-[10px] shrink-0 font-bold">
+          Default: Pending
+        </Badge>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Core Information Card */}
+        {/* General Details */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
           <h2 className="font-bold text-base text-foreground flex items-center gap-2">
             <Wrench className="h-4 w-4 text-amber" />
-            <span>General Machine Details</span>
+            <span>Equipment Identity & Classification</span>
           </h2>
 
           <div>
             <label className="text-xs font-semibold text-foreground block mb-1">
-              Equipment Title / Model Name *
+              Equipment Name *
             </label>
             <Input
               type="text"
-              placeholder="e.g. Caterpillar 305.5E2 Mini Hydraulic Excavator"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Caterpillar 305.5E2 Hydraulic Excavator"
+              value={equipmentName}
+              onChange={(e) => setEquipmentName(e.target.value)}
               required
               className="text-xs"
             />
@@ -169,7 +182,7 @@ export default function NewEquipmentPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-foreground block mb-1">
-                Equipment Class / Category *
+                Category (Dropdown) *
               </label>
               <select
                 value={category}
@@ -184,7 +197,7 @@ export default function NewEquipmentPage() {
 
             <div>
               <label className="text-xs font-semibold text-foreground block mb-1">
-                Mechanical Condition
+                Equipment Condition
               </label>
               <select
                 value={condition}
@@ -198,13 +211,41 @@ export default function NewEquipmentPage() {
             </div>
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-semibold text-foreground block mb-1">
+                Brand
+              </label>
+              <Input
+                type="text"
+                placeholder="e.g. Caterpillar, Sony, John Deere"
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+                className="text-xs"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-foreground block mb-1">
+                Model
+              </label>
+              <Input
+                type="text"
+                placeholder="e.g. 305.5E2, A7S III, 5075E"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className="text-xs"
+              />
+            </div>
+          </div>
+
           <div>
             <label className="text-xs font-semibold text-foreground block mb-1">
-              Detailed Scope & Operational Description
+              Description
             </label>
             <textarea
-              rows={4}
-              placeholder="Detail operating capacity, hydraulic connections, cab AC, maintenance history..."
+              rows={3}
+              placeholder="Describe machine capability, operating weight, included attachments, maintenance log..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full p-3 rounded-md border border-input bg-background text-xs focus:outline-none focus:ring-1 focus:ring-amber"
@@ -212,23 +253,23 @@ export default function NewEquipmentPage() {
           </div>
         </Card>
 
-        {/* Pricing & Location Card */}
+        {/* Pricing, Quantity & Terms */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
           <h2 className="font-bold text-base text-foreground flex items-center gap-2">
             <DollarSign className="h-4 w-4 text-amber" />
-            <span>Rental Pricing & Job-Site Location</span>
+            <span>Rental Terms & Inventory</span>
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="text-xs font-semibold text-foreground block mb-1">
-                Daily Rental Rate (USD $) *
+                Rental Price ($) *
               </label>
               <Input
                 type="number"
                 placeholder="250"
-                value={pricePerDay}
-                onChange={(e) => setPricePerDay(e.target.value)}
+                value={rentalPrice}
+                onChange={(e) => setRentalPrice(e.target.value)}
                 required
                 min="1"
                 className="text-xs"
@@ -237,17 +278,54 @@ export default function NewEquipmentPage() {
 
             <div>
               <label className="text-xs font-semibold text-foreground block mb-1">
-                Refundable Security Deposit (USD $)
+                Rental Type
+              </label>
+              <select
+                value={rentalType}
+                onChange={(e) => setRentalType(e.target.value)}
+                className="w-full h-10 px-3 rounded-md border border-input bg-background text-xs font-medium focus:outline-none focus:ring-1 focus:ring-amber"
+              >
+                {RENTAL_TYPES.map((t) => (
+                  <option key={t} value={t}>{t} Rate</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-foreground block mb-1">
+                Available Quantity
               </label>
               <Input
                 type="number"
-                placeholder="300"
-                value={securityDeposit}
-                onChange={(e) => setSecurityDeposit(e.target.value)}
+                placeholder="1"
+                value={availableQuantity}
+                onChange={(e) => setAvailableQuantity(e.target.value)}
+                min="1"
                 className="text-xs"
               />
             </div>
           </div>
+
+          <div>
+            <label className="text-xs font-semibold text-foreground block mb-1">
+              Rental Terms and Conditions
+            </label>
+            <textarea
+              rows={3}
+              placeholder="Specify damage deposit policies, required operator licensing, clean fuel return requirements..."
+              value={rentalTerms}
+              onChange={(e) => setRentalTerms(e.target.value)}
+              className="w-full p-3 rounded-md border border-input bg-background text-xs focus:outline-none focus:ring-1 focus:ring-amber"
+            />
+          </div>
+        </Card>
+
+        {/* Location */}
+        <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
+          <h2 className="font-bold text-base text-foreground flex items-center gap-2">
+            <MapPin className="h-4 w-4 text-amber" />
+            <span>Equipment Location</span>
+          </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
@@ -261,7 +339,7 @@ export default function NewEquipmentPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-foreground block mb-1">State</label>
+              <label className="text-xs font-semibold text-foreground block mb-1">State / Province</label>
               <Input
                 type="text"
                 placeholder="TX"
@@ -271,10 +349,10 @@ export default function NewEquipmentPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-foreground block mb-1">Yard / Depot</label>
+              <label className="text-xs font-semibold text-foreground block mb-1">Street / Depot Address</label>
               <Input
                 type="text"
-                placeholder="Industrial Hub 4"
+                placeholder="742 Fleet Yard Ave"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 className="text-xs"
@@ -283,17 +361,17 @@ export default function NewEquipmentPage() {
           </div>
         </Card>
 
-        {/* Machine Image URLs */}
+        {/* Photography */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
           <h2 className="font-bold text-base text-foreground flex items-center gap-2">
             <ImageIcon className="h-4 w-4 text-amber" />
-            <span>Machine Photography</span>
+            <span>Equipment Image (Direct Link / Upload)</span>
           </h2>
 
           <div className="flex gap-2">
             <Input
               type="url"
-              placeholder="Paste image URL (https://...)"
+              placeholder="Paste direct image link (e.g. imgbb, Unsplash, or CDN URL)"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               className="text-xs"
@@ -305,14 +383,14 @@ export default function NewEquipmentPage() {
               variant="outline"
               className="shrink-0 text-xs font-semibold"
             >
-              Add URL
+              Add Image
             </Button>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
             {images.map((img, i) => (
               <div key={i} className="relative group rounded-lg overflow-hidden border border-border aspect-[16/10] bg-muted">
-                <img src={img} alt="Equipment" className="h-full w-full object-cover" />
+                <img src={img} alt="Equipment preview" className="h-full w-full object-cover" />
                 <button
                   type="button"
                   onClick={() => removeImage(i)}
@@ -326,62 +404,13 @@ export default function NewEquipmentPage() {
           </div>
         </Card>
 
-        {/* Technical Specifications */}
-        <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-bold text-base text-foreground">
-              Technical Specifications
-            </h2>
-            <Button
-              type="button"
-              onClick={addSpec}
-              size="sm"
-              variant="outline"
-              className="text-xs font-semibold gap-1 h-8"
-            >
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span>Add Spec Row</span>
-            </Button>
-          </div>
-
-          <div className="space-y-2">
-            {specs.map((s, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <Input
-                  type="text"
-                  placeholder="Key (e.g. Operating Weight)"
-                  value={s.key}
-                  onChange={(e) => updateSpec(idx, "key", e.target.value)}
-                  className="text-xs flex-1"
-                />
-                <Input
-                  type="text"
-                  placeholder="Value (e.g. 5,400 kg)"
-                  value={s.value}
-                  onChange={(e) => updateSpec(idx, "value", e.target.value)}
-                  className="text-xs flex-1"
-                />
-                <Button
-                  type="button"
-                  onClick={() => removeSpec(idx)}
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-destructive shrink-0"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        </Card>
-
         <Button
           type="submit"
           size="lg"
           disabled={loading}
           className="w-full bg-amber text-graphite hover:bg-amber/90 font-bold text-sm shadow-md"
         >
-          {loading ? "Publishing Listing..." : "Publish Fleet Listing"}
+          {loading ? "Submitting for Moderation..." : "Add Equipment (Submit for Review)"}
         </Button>
       </form>
     </div>
