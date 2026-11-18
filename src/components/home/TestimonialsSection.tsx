@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -26,6 +29,14 @@ const REVIEWS = [
     equipment: "Genie GS-1930 Scissor Lift",
     quote: "Instead of calling three different rental yards and waiting on faxed quote forms, I reserved two Genie scissor lifts right from my phone at 6 AM. The digital inspection checklist made check-in painless.",
   },
+  {
+    name: "Sarah Chen",
+    role: "Director of Photography, Redline Media Group",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
+    rating: 5,
+    equipment: "Sony FX6 Cinema Camera Package",
+    quote: "EquipLoop gave us access to a complete Sony FX6 full-frame rig with GM prime lenses for a national commercial shoot. The equipment was impeccably maintained, fully calibrated, and arrived right on schedule.",
+  },
 ];
 
 export function TestimonialsSection() {
@@ -37,18 +48,22 @@ export function TestimonialsSection() {
             Verified Contractor Feedback
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-            Trusted by Builders & Operators
+            Customer Reviews & Testimonials
           </h2>
           <p className="text-sm text-muted-foreground mt-2">
-            Read what site superintendents, trade pros, and event leads have to say about EquipLoop rentals.
+            Read what site superintendents, trade pros, cinema directors, and event leads have to say about EquipLoop rentals.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {REVIEWS.map((rev) => (
-            <div
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {REVIEWS.map((rev, idx) => (
+            <motion.div
               key={rev.name}
-              className="p-6 rounded-2xl bg-card border border-border flex flex-col justify-between shadow-xs hover:border-amber/40 transition-colors"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.08 }}
+              className="p-6 rounded-2xl bg-card border border-border flex flex-col justify-between shadow-xs hover:border-amber/40 transition-colors h-full"
             >
               <div>
                 {/* Rating Stars & Quote Icon */}
@@ -62,7 +77,7 @@ export function TestimonialsSection() {
                 </div>
 
                 {/* Review Text */}
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed italic mb-6">
+                <p className="text-xs text-muted-foreground leading-relaxed italic mb-6">
                   &ldquo;{rev.quote}&rdquo;
                 </p>
               </div>
@@ -70,22 +85,22 @@ export function TestimonialsSection() {
               {/* Author & Equipment Tag */}
               <div className="pt-4 border-t border-border/60">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10 border border-border">
+                  <Avatar className="h-9 w-9 border border-border">
                     <AvatarImage src={rev.avatar} alt={rev.name} />
                     <AvatarFallback className="bg-graphite text-white text-xs font-bold">
                       {rev.name.slice(0, 2)}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <h4 className="font-bold text-sm text-foreground">{rev.name}</h4>
-                    <p className="text-[11px] text-muted-foreground">{rev.role}</p>
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-xs text-foreground truncate">{rev.name}</h4>
+                    <p className="text-[10px] text-muted-foreground truncate">{rev.role}</p>
                   </div>
                 </div>
-                <div className="mt-2 text-[10px] font-medium text-amber bg-amber/10 px-2 py-0.5 rounded inline-block">
+                <div className="mt-2 text-[10px] font-medium text-amber bg-amber/10 px-2 py-0.5 rounded truncate">
                   Rented: {rev.equipment}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
