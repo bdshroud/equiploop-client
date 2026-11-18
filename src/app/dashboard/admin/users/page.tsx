@@ -11,10 +11,10 @@ import {
   UserX,
   Mail,
   Phone,
+  MoreVertical,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate } from "@/lib/utils";
@@ -89,14 +89,15 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
-          Identity Governance
+        <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1 flex items-center gap-1.5">
+          <ShieldCheck className="h-3.5 w-3.5" />
+          <span>Identity Governance</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-          Platform User Management
+          All Users (Manage Users)
         </h1>
         <p className="text-xs text-muted-foreground mt-1">
-          Manage member accounts, promote users to Equipment Owner or Admin roles, and enforce moderation.
+          Review registered platform members, update role permissions, and moderate user account access.
         </p>
       </div>
 
@@ -114,96 +115,119 @@ export default function AdminUsersPage() {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span className="text-xs text-muted-foreground hidden sm:inline">Role:</span>
+          <span className="text-xs text-muted-foreground hidden sm:inline">Filter Role:</span>
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
             className="h-9 px-3 rounded-md border border-input bg-background text-xs font-medium focus:outline-none focus:ring-1 focus:ring-amber w-full sm:w-auto"
           >
             <option value="All">All Roles</option>
-            <option value="Customer">Customer Only</option>
-            <option value="Owner">Owner Only</option>
-            <option value="Admin">Admin Only</option>
+            <option value="Customer">Customer</option>
+            <option value="Owner">Owner</option>
+            <option value="Admin">Admin</option>
           </select>
         </div>
       </div>
 
       {loading ? (
-        <div className="space-y-3">
-          {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-xl" />
+        <div className="space-y-2">
+          {[...Array(5)].map((_, i) => (
+            <Skeleton key={i} className="h-14 rounded-xl" />
           ))}
         </div>
       ) : users.length === 0 ? (
         <div className="p-10 text-center rounded-2xl border border-dashed border-border bg-card">
           <Users className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-          <p className="text-sm font-semibold">No users found matching query.</p>
+          <p className="text-sm font-semibold">No platform users found matching your criteria.</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {users.map((u) => {
-            const uid = u._id || u.id || "";
-            return (
-              <Card key={uid} className="p-4 rounded-xl border-border bg-card shadow-xs hover:border-amber/40 transition-colors">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-sm text-foreground">{u.name}</h3>
-                      <Badge
-                        variant={u.role === "Admin" ? "destructive" : u.role === "Owner" ? "amber" : "secondary"}
-                        className="text-[10px]"
-                      >
-                        {u.role}
-                      </Badge>
-                      {u.status === "Suspended" && (
-                        <Badge variant="destructive" className="text-[10px]">
-                          Suspended
+        <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-xs">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-muted/60 text-muted-foreground border-b border-border uppercase font-bold text-[10px] tracking-wider">
+              <tr>
+                <th className="py-3.5 px-4">Name</th>
+                <th className="py-3.5 px-4">Email</th>
+                <th className="py-3.5 px-4">Role</th>
+                <th className="py-3.5 px-4">Registration Date</th>
+                <th className="py-3.5 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {users.map((u) => {
+                const uid = u._id || u.id || "";
+                return (
+                  <tr key={uid} className="hover:bg-muted/30 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-foreground">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-full bg-amber/20 text-amber font-black text-xs flex items-center justify-center shrink-0">
+                          {u.name?.charAt(0) || "U"}
+                        </div>
+                        <div>
+                          <div>{u.name}</div>
+                          {u.phone && (
+                            <span className="text-[10px] text-muted-foreground font-normal block">
+                              {u.phone}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-muted-foreground">
+                      <span className="font-mono text-[11px]">{u.email}</span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-1.5">
+                        <Badge
+                          variant={u.role === "Admin" ? "destructive" : u.role === "Owner" ? "amber" : "secondary"}
+                          className="text-[10px] font-bold"
+                        >
+                          {u.role}
                         </Badge>
-                      )}
-                    </div>
+                        {u.status === "Suspended" && (
+                          <Badge variant="destructive" className="text-[10px]">
+                            Suspended
+                          </Badge>
+                        )}
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-muted-foreground">
+                      {formatDate(u.createdAt)}
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        {/* Change Role */}
+                        <select
+                          value={u.role}
+                          onChange={(e) => handleRoleChange(uid, e.target.value as any)}
+                          className="h-8 px-2 rounded-md border border-input bg-background text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-amber"
+                          title="Change Role"
+                        >
+                          <option value="Customer">Customer</option>
+                          <option value="Owner">Owner</option>
+                          <option value="Admin">Admin</option>
+                        </select>
 
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
-                      <span className="flex items-center gap-1">
-                        <Mail className="h-3 w-3" />
-                        {u.email}
-                      </span>
-                      {u.phone && (
-                        <span className="flex items-center gap-1">
-                          <Phone className="h-3 w-3" />
-                          {u.phone}
-                        </span>
-                      )}
-                      <span>Joined {formatDate(u.createdAt)}</span>
-                    </div>
-                  </div>
-
-                  {/* Actions: Change Role & Change Status */}
-                  <div className="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-border justify-end">
-                    <select
-                      value={u.role}
-                      onChange={(e) => handleRoleChange(uid, e.target.value as any)}
-                      className="h-8 px-2.5 rounded-md border border-input bg-background text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-amber"
-                    >
-                      <option value="Customer">Role: Customer</option>
-                      <option value="Owner">Role: Owner</option>
-                      <option value="Admin">Role: Admin</option>
-                    </select>
-
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleStatusChange(uid, u.status === "Suspended" ? "Active" : "Suspended")}
-                      className={`h-8 px-2.5 text-xs font-semibold ${
-                        u.status === "Suspended" ? "text-emerald-600 hover:bg-emerald-50" : "text-destructive hover:bg-destructive/10"
-                      }`}
-                    >
-                      {u.status === "Suspended" ? "Activate" : "Suspend"}
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
+                        {/* Manage Users */}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleStatusChange(uid, u.status === "Suspended" ? "Active" : "Suspended")}
+                          className={`h-8 px-2.5 text-xs font-semibold ${
+                            u.status === "Suspended"
+                              ? "text-emerald-600 hover:bg-emerald-50 border-emerald-300"
+                              : "text-destructive hover:bg-destructive/10 border-destructive/30"
+                          }`}
+                          title="Manage User Status"
+                        >
+                          {u.status === "Suspended" ? "Activate" : "Suspend"}
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
