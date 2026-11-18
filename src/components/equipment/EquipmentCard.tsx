@@ -1,0 +1,214 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Star, MapPin, ShieldCheck, Heart, ArrowUpRight } from "lucide-react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { formatCurrency } from "@/lib/utils";
+import { useSession } from "@/lib/auth-client";
+import { fetchApi } from "@/lib/api";
+import { toast } from "sonner";
+
+export interface EquipmentItem {
+  _id: string;
+  title: string;
+  category: string;
+  description: string;
+  images: string[];
+  pricePerDay: number;
+  securityDeposit?: number;
+  condition?: string;
+  location?: {
+    city: string;
+    state: string;
+    address?: string;
+  };
+  availability: boolean;
+  status: string;
+  isFeatured?: boolean;
+  rating?: number;
+  totalReviews?: number;
+  ownerName?: string;
+}
+
+interface EquipmentCardProps {
+  item: EquipmentItem;
+  isWishlisted?: boolean;
+  onWishlistToggle?: (id: string, isSaved: boolean) => void;
+}
+
+export function EquipmentCard({
+  item,
+  isWishlisted = false,
+  onWishlistToggle,
+}: EquipmentCardProps) {
+  const { data: session } = useSession();
+  const [saved, setSaved] = React.useState(isWishlisted);
+  const [loadingSave, setLoadingSave] = React.useState(false);
+
+  const handleToggleWishlist = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!session?.user) {
+      toast.error("Please sign in to save equipment to your wishlist");
+      return;
+    }
+
+    try {
+      setLoadingSave(true);
+      const res = await fetchApi<{ success: boolean; isSaved: boolean; message: string }>(
+        `/users/wishlist/${item._id}`,
+        { method: "POST" }
+      );
+      setSaved(res.isSaved);
+      if (res.isSaved) {
+        toast.success("Added to your saved wishlist");
+      } else {
+        toast.info("Removed from your wishlist");
+      }
+      onWishlistToggle?.(item._id, res.isSaved);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update wishlist");
+    } finally {
+      setLoadingSave(false);
+    }
+  };
+
+  const displayImage =
+    item.images && item.images.length > 0
+      ? item.images[0]
+      : "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80";
+
+  return (
+    <Card className="h-full flex flex-col overflow-hidden group hover:shadow-lg transition-all duration-300 border-border hover:border-amber/50 bg-card">
+      {/* Uniform Aspect Ratio Image Container */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+        <img
+          src={displayImage}
+          alt={item.title}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+        />
+
+        {/* Top Badges Overlay */}
+        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
+          <Badge
+            variant="secondary"
+            className="text-[11px] font-semibold bg-graphite/90 text-white backdrop-blur-xs border-none"
+          >
+            {item.category}
+          </Badge>
+          {item.isFeatured && (
+            <Badge
+              variant="default"
+              className="text-[11px] font-semibold bg-amber text-graphite shadow-xs border-none"
+            >
+              Featured
+            </Badge>
+          )}
+        </div>
+
+        {/* Wishlist Heart Button */}
+        <button
+          type="button"
+          onClick={handleToggleWishlist}
+          disabled={loadingSave}
+          aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
+          className={`absolute top-2.5 right-2.5 h-8 w-8 rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
+            saved
+              ? "bg-red-500 text-white shadow-md scale-105"
+              : "bg-black/40 text-white hover:bg-black/60 hover:scale-110"
+          }`}
+        >
+          <Heart className={`h-4 w-4 ${saved ? "fill-current" : ""}`} />
+        </button>
+
+        {/* Availability Strip */}
+        <div className="absolute bottom-2 left-2.5">
+          <span
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+              item.availability
+                ? "bg-emerald-500/90 text-white"
+                : "bg-amber-600/90 text-white"
+            }`}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+            {item.availability ? "Available Now" : "Currently Booked"}
+          </span>
+        </div>
+      </div>
+
+      {/* Card Content */}
+      <CardContent className="flex-1 flex flex-col p-4 sm:p-5">
+        {/* Rating and Location Header */}
+        <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground mb-2">
+          <div className="flex items-center gap-1 font-semibold text-foreground">
+            <Star className="h-3.5 w-3.5 fill-amber text-amber" />
+            <span>{(item.rating || 5.0).toFixed(1)}</span>
+            <span className="text-muted-foreground font-normal">
+              ({item.totalReviews || 0})
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1 truncate">
+            <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <span className="truncate">
+              {item.location?.city ? `${item.location.city}, ${item.location.state}` : "National Fleet"}
+            </span>
+          </div>
+        </div>
+
+        {/* Title */}
+        <Link href={`/equipment/${item._id}`} className="group-hover:text-amber transition-colors">
+          <h3 className="font-bold text-base leading-snug line-clamp-2 text-foreground">
+            {item.title}
+          </h3>
+        </Link>
+
+        {/* Short description */}
+        <p className="text-xs text-muted-foreground line-clamp-2 mt-1.5 leading-relaxed">
+          {item.description}
+        </p>
+
+        {/* Condition & Verified pill */}
+        <div className="mt-3 flex items-center gap-2">
+          <span className="text-[11px] px-2 py-0.5 rounded bg-muted font-medium text-foreground">
+            Condition: {item.condition || "Excellent"}
+          </span>
+          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <ShieldCheck className="h-3 w-3 text-emerald-500" />
+            Inspected
+          </span>
+        </div>
+      </CardContent>
+
+      {/* Card Footer with Price and CTA */}
+      <CardFooter className="p-4 sm:p-5 pt-0 mt-auto flex items-center justify-between border-t border-border/50 pt-3">
+        <div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-lg sm:text-xl font-extrabold text-foreground">
+              {formatCurrency(item.pricePerDay)}
+            </span>
+            <span className="text-xs text-muted-foreground font-medium">/ day</span>
+          </div>
+          {item.securityDeposit ? (
+            <p className="text-[10px] text-muted-foreground">
+              +{formatCurrency(item.securityDeposit)} deposit
+            </p>
+          ) : null}
+        </div>
+
+        <Link href={`/equipment/${item._id}`}>
+          <Button size="sm" className="font-semibold text-xs gap-1 group/btn">
+            <span>Rent Now</span>
+            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+          </Button>
+        </Link>
+      </CardFooter>
+    </Card>
+  );
+}
