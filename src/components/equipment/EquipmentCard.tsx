@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Star, MapPin, ShieldCheck, Heart, ArrowUpRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Star, MapPin, ShieldCheck, Heart, ArrowUpRight, Lock } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,12 +15,18 @@ import { toast } from "sonner";
 export interface EquipmentItem {
   _id: string;
   title: string;
+  equipmentName?: string;
   category: string;
   description: string;
   images: string[];
   pricePerDay: number;
+  rentalPrice?: number;
+  rentalType?: string;
   securityDeposit?: number;
+  availableQuantity?: number;
   condition?: string;
+  brand?: string;
+  model?: string;
   location?: {
     city: string;
     state: string;
@@ -38,23 +44,40 @@ interface EquipmentCardProps {
   item: EquipmentItem;
   isWishlisted?: boolean;
   onWishlistToggle?: (id: string, isSaved: boolean) => void;
+  requireAuthForDetails?: boolean;
 }
 
 export function EquipmentCard({
   item,
   isWishlisted = false,
   onWishlistToggle,
+  requireAuthForDetails = false,
 }: EquipmentCardProps) {
+  const router = useRouter();
   const { data: session } = useSession();
   const [saved, setSaved] = React.useState(isWishlisted);
   const [loadingSave, setLoadingSave] = React.useState(false);
+
+  const displayTitle = item.title || item.equipmentName || "Commercial Machinery";
+  const displayPrice = item.pricePerDay || item.rentalPrice || 0;
+  const displayRentalType = item.rentalType || "Day";
+
+  const handleDetailsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!session?.user) {
+      toast.info("Please sign in to access equipment details and rental booking");
+      router.push(`/login?redirect=/equipment/${item._id}`);
+    } else {
+      router.push(`/equipment/${item._id}`);
+    }
+  };
 
   const handleToggleWishlist = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!session?.user) {
-      toast.error("Please sign in to save equipment to your wishlist");
+      toast.error("Please sign in to save equipment to your favorites");
       return;
     }
 
@@ -66,13 +89,13 @@ export function EquipmentCard({
       );
       setSaved(res.isSaved);
       if (res.isSaved) {
-        toast.success("Added to your saved wishlist");
+        toast.success("Saved to your favorites");
       } else {
-        toast.info("Removed from your wishlist");
+        toast.info("Removed from your favorites");
       }
       onWishlistToggle?.(item._id, res.isSaved);
     } catch (err: any) {
-      toast.error(err.message || "Failed to update wishlist");
+      toast.error(err.message || "Failed to update favorites");
     } finally {
       setLoadingSave(false);
     }
@@ -89,7 +112,7 @@ export function EquipmentCard({
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
         <img
           src={displayImage}
-          alt={item.title}
+          alt={displayTitle}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
@@ -112,12 +135,12 @@ export function EquipmentCard({
           )}
         </div>
 
-        {/* Wishlist Heart Button */}
+        {/* Wishlist / Favorite Heart Button */}
         <button
           type="button"
           onClick={handleToggleWishlist}
           disabled={loadingSave}
-          aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
+          aria-label={saved ? "Remove from favorites" : "Add to favorites"}
           className={`absolute top-2.5 right-2.5 h-8 w-8 rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
             saved
               ? "bg-red-500 text-white shadow-md scale-105"
@@ -162,38 +185,43 @@ export function EquipmentCard({
           </div>
         </div>
 
-        {/* Title */}
-        <Link href={`/equipment/${item._id}`} className="group-hover:text-amber transition-colors">
+        {/* Title (clicking checks auth if required) */}
+        <button
+          type="button"
+          onClick={handleDetailsClick}
+          className="text-left group-hover:text-amber transition-colors"
+        >
           <h3 className="font-bold text-base leading-snug line-clamp-2 text-foreground">
-            {item.title}
+            {displayTitle}
           </h3>
-        </Link>
+        </button>
 
         {/* Short description */}
         <p className="text-xs text-muted-foreground line-clamp-2 mt-1.5 leading-relaxed">
           {item.description}
         </p>
 
-        {/* Condition & Verified pill */}
-        <div className="mt-3 flex items-center gap-2">
+        {/* Condition & Available Quantity pill */}
+        <div className="mt-3 flex items-center gap-2 flex-wrap">
           <span className="text-[11px] px-2 py-0.5 rounded bg-muted font-medium text-foreground">
             Condition: {item.condition || "Excellent"}
           </span>
-          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-            <ShieldCheck className="h-3 w-3 text-emerald-500" />
-            Inspected
-          </span>
+          {item.availableQuantity !== undefined && (
+            <span className="text-[11px] text-muted-foreground">
+              Qty: <strong>{item.availableQuantity}</strong>
+            </span>
+          )}
         </div>
       </CardContent>
 
-      {/* Card Footer with Price and CTA */}
+      {/* Card Footer with Price and View Details CTA */}
       <CardFooter className="p-4 sm:p-5 pt-0 mt-auto flex items-center justify-between border-t border-border/50 pt-3">
         <div>
           <div className="flex items-baseline gap-1">
             <span className="text-lg sm:text-xl font-extrabold text-foreground">
-              {formatCurrency(item.pricePerDay)}
+              {formatCurrency(displayPrice)}
             </span>
-            <span className="text-xs text-muted-foreground font-medium">/ day</span>
+            <span className="text-xs text-muted-foreground font-medium">/ {displayRentalType.toLowerCase()}</span>
           </div>
           {item.securityDeposit ? (
             <p className="text-[10px] text-muted-foreground">
@@ -202,12 +230,14 @@ export function EquipmentCard({
           ) : null}
         </div>
 
-        <Link href={`/equipment/${item._id}`}>
-          <Button size="sm" className="font-semibold text-xs gap-1 group/btn">
-            <span>Rent Now</span>
-            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-          </Button>
-        </Link>
+        <Button
+          onClick={handleDetailsClick}
+          size="sm"
+          className="font-semibold text-xs gap-1 group/btn bg-amber text-graphite hover:bg-amber/90"
+        >
+          <span>View Details</span>
+          <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+        </Button>
       </CardFooter>
     </Card>
   );
