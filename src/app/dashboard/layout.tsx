@@ -10,13 +10,11 @@ import {
   User,
   PlusCircle,
   Layers,
-  FileText,
   ShieldCheck,
   Users,
-  Settings,
-  ChevronRight,
   LogOut,
   Building,
+  Heart,
 } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
@@ -63,27 +61,27 @@ export default function DashboardLayout({
     );
   }
 
-  // Define nav sections based on role
+  // Exact Assignment Role-Based Navigation
   const customerNav = [
-    { label: "My Bookings", href: "/dashboard/rentals", icon: CalendarCheck },
-    { label: "Saved Wishlist", href: "/dashboard/wishlist", icon: Bookmark },
-    { label: "Profile & Settings", href: "/dashboard/profile", icon: User },
+    { label: "My Rentals", href: "/dashboard/rentals", icon: CalendarCheck },
+    { label: "Favorites", href: "/dashboard/favorites", icon: Heart },
+    { label: "Profile", href: "/dashboard/profile", icon: User },
   ];
 
   const ownerNav = [
     { label: "Fleet Overview", href: "/dashboard/owner", icon: LayoutDashboard },
     { label: "My Equipment", href: "/dashboard/owner/equipment", icon: Layers },
-    { label: "List New Machine", href: "/dashboard/owner/equipment/new", icon: PlusCircle },
-    { label: "Rental Inquiries", href: "/dashboard/owner/bookings", icon: CalendarCheck },
-    { label: "Profile & Settings", href: "/dashboard/profile", icon: User },
+    { label: "Add Equipment", href: "/dashboard/owner/equipment/new", icon: PlusCircle },
+    { label: "My Equipment Rental", href: "/dashboard/owner/bookings", icon: CalendarCheck },
+    { label: "Profile", href: "/dashboard/profile", icon: User },
   ];
 
   const adminNav = [
     { label: "Platform Overview", href: "/dashboard/admin", icon: ShieldCheck },
-    { label: "User Management", href: "/dashboard/admin/users", icon: Users },
-    { label: "Equipment Moderation", href: "/dashboard/admin/equipment", icon: Layers },
-    { label: "All Platform Bookings", href: "/dashboard/admin/bookings", icon: CalendarCheck },
-    { label: "Profile & Settings", href: "/dashboard/profile", icon: User },
+    { label: "All Users", href: "/dashboard/admin/users", icon: Users },
+    { label: "All Equipment", href: "/dashboard/admin/equipment", icon: Layers },
+    { label: "All Bookings", href: "/dashboard/admin/bookings", icon: CalendarCheck },
+    { label: "Profile", href: "/dashboard/profile", icon: User },
   ];
 
   let currentNav = customerNav;
