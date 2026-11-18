@@ -6,18 +6,15 @@ import { useSearchParams, useRouter } from "next/navigation";
 import {
   CalendarCheck,
   CreditCard,
-  Clock,
   CheckCircle2,
   XCircle,
-  AlertCircle,
   ExternalLink,
   MessageSquare,
-  Wrench,
-  Search,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { fetchApi } from "@/lib/api";
@@ -64,7 +61,6 @@ function CustomerRentalsContent() {
     }
   }, []);
 
-  // Handle Stripe callback verification
   React.useEffect(() => {
     if (paymentQuery && (paymentQuery === "success" || paymentQuery === "mock_success") && sessionId) {
       async function verify() {
@@ -124,39 +120,38 @@ function CustomerRentalsContent() {
   const getStatusBadge = (status: Booking["status"]) => {
     switch (status) {
       case "Pending":
-        return <Badge variant="secondary" className="bg-amber/15 text-amber border-amber/30">Pending Approval</Badge>;
+        return <Badge variant="secondary" className="bg-amber/15 text-amber border-amber/30 text-[10px]">Pending</Badge>;
       case "Confirmed":
-        return <Badge variant="info">Confirmed & Ready</Badge>;
+        return <Badge variant="info" className="text-[10px]">Confirmed</Badge>;
       case "Active":
-        return <Badge variant="success">Active on Site</Badge>;
+        return <Badge variant="success" className="text-[10px]">Active on Site</Badge>;
       case "Completed":
-        return <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-500/30">Completed</Badge>;
+        return <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-500/30 text-[10px]">Completed</Badge>;
       case "Cancelled":
-        return <Badge variant="destructive">Cancelled</Badge>;
+        return <Badge variant="destructive" className="text-[10px]">Cancelled</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline" className="text-[10px]">{status}</Badge>;
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div>
         <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
-          Rental History & Bookings
+          Customer Rental Ledger
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-          My Equipment Bookings
+          My Rentals
         </h1>
         <p className="text-xs text-muted-foreground mt-1">
-          Review dispatch statuses, access digital rental invoices, and complete Stripe payments.
+          Review dispatch statuses, manage Stripe payments, and track equipment rental dates in tabular ledger format.
         </p>
       </div>
 
       {loading ? (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-2xl" />
+            <Skeleton key={i} className="h-16 w-full rounded-xl" />
           ))}
         </div>
       ) : bookings.length === 0 ? (
@@ -164,9 +159,9 @@ function CustomerRentalsContent() {
           <div className="h-12 w-12 rounded-full bg-amber/15 text-amber mx-auto flex items-center justify-center mb-3">
             <CalendarCheck className="h-6 w-6" />
           </div>
-          <h3 className="font-bold text-lg text-foreground">No Bookings Yet</h3>
+          <h3 className="font-bold text-lg text-foreground">No Rental Bookings Found</h3>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-6">
-            You haven&apos;t reserved any commercial equipment yet. Browse our verified fleet to find the machinery you need.
+            You haven&apos;t reserved any equipment yet. Explore our verified commercial fleet to find the machinery you need.
           </p>
           <Link href="/equipment">
             <Button size="sm" className="bg-amber text-graphite hover:bg-amber/90 font-bold">
@@ -175,104 +170,120 @@ function CustomerRentalsContent() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
-          {bookings.map((b) => (
-            <Card key={b._id} className="p-5 rounded-2xl overflow-hidden shadow-xs hover:border-amber/40 transition-colors">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                {/* Equipment Info */}
-                <div className="flex items-start gap-4">
-                  <div className="h-18 w-24 rounded-xl overflow-hidden bg-muted shrink-0 border border-border">
-                    <img
-                      src={b.equipmentImage || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80"}
-                      alt={b.equipmentTitle}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                        {b.equipmentCategory}
-                      </span>
-                      {getStatusBadge(b.status)}
-                      {b.paymentStatus === "Paid" ? (
-                        <Badge variant="success" className="text-[10px]">
-                          Paid in Full
-                        </Badge>
-                      ) : (
-                        <Badge variant="amber" className="text-[10px]">
-                          Payment Due
-                        </Badge>
-                      )}
-                    </div>
-
-                    <Link href={`/equipment/${b.equipmentId}`} className="hover:text-amber transition-colors">
-                      <h3 className="font-bold text-base text-foreground leading-tight">
-                        {b.equipmentTitle}
-                      </h3>
-                    </Link>
-
-                    <div className="text-xs text-muted-foreground flex items-center gap-3 pt-0.5">
-                      <span>
-                        Dates: <strong className="text-foreground">{formatDate(b.startDate)}</strong> to{" "}
-                        <strong className="text-foreground">{formatDate(b.endDate)}</strong> ({b.totalDays} day{b.totalDays > 1 ? "s" : ""})
-                      </span>
-                      <span>•</span>
-                      <span>Delivery: {b.deliveryOption}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pricing and Action Buttons */}
-                <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-3 sm:pt-0 border-border gap-2 shrink-0">
-                  <div className="text-left sm:text-right">
-                    <span className="text-xs text-muted-foreground block">Total Amount</span>
-                    <span className="text-lg font-black text-foreground">
-                      {formatCurrency(b.totalAmount)}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {/* Pay Now Button if Unpaid */}
-                    {b.paymentStatus === "Unpaid" && b.status !== "Cancelled" && (
-                      <Button
-                        size="sm"
-                        disabled={payingId === b._id}
-                        onClick={() => handlePayNow(b._id)}
-                        className="bg-amber text-graphite hover:bg-amber/90 font-bold text-xs gap-1.5 shadow-sm"
-                      >
-                        <CreditCard className="h-3.5 w-3.5" />
-                        <span>{payingId === b._id ? "Loading..." : "Pay with Stripe"}</span>
-                      </Button>
-                    )}
-
-                    {/* Cancel button if pending */}
-                    {b.status === "Pending" && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleCancel(b._id)}
-                        className="text-xs text-destructive hover:bg-destructive/10 font-semibold"
-                      >
-                        Cancel
-                      </Button>
-                    )}
-
-                    {/* Review Button if Completed */}
-                    {b.status === "Completed" && (
-                      <Link href={`/equipment/${b.equipmentId}`}>
-                        <Button size="sm" variant="outline" className="text-xs font-semibold gap-1">
-                          <MessageSquare className="h-3.5 w-3.5 text-amber" />
-                          <span>Review</span>
-                        </Button>
+        /* Table Format per Assignment Specification */
+        <Card className="rounded-2xl border-border bg-card shadow-xs overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-muted/60 text-muted-foreground font-semibold border-b border-border uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th className="py-3 px-4">Equipment Name</th>
+                  <th className="py-3 px-4">Rental Start Date</th>
+                  <th className="py-3 px-4">Rental End Date</th>
+                  <th className="py-3 px-4">Booking Date</th>
+                  <th className="py-3 px-4">Total Amount</th>
+                  <th className="py-3 px-4">Payment Status</th>
+                  <th className="py-3 px-4">Booking Status</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {bookings.map((b) => (
+                  <tr key={b._id} className="hover:bg-muted/30 transition-colors">
+                    {/* Equipment Name */}
+                    <td className="py-3.5 px-4 font-bold text-foreground">
+                      <Link href={`/equipment/${b.equipmentId}`} className="hover:text-amber transition-colors flex items-center gap-2">
+                        <img
+                          src={b.equipmentImage || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"}
+                          alt={b.equipmentTitle}
+                          className="h-9 w-12 rounded object-cover border border-border shrink-0"
+                        />
+                        <span className="line-clamp-1 max-w-[200px]">{b.equipmentTitle}</span>
                       </Link>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+                    </td>
+
+                    {/* Rental Start Date */}
+                    <td className="py-3.5 px-4 text-muted-foreground whitespace-nowrap">
+                      {formatDate(b.startDate)}
+                    </td>
+
+                    {/* Rental End Date */}
+                    <td className="py-3.5 px-4 text-muted-foreground whitespace-nowrap">
+                      {formatDate(b.endDate)}
+                    </td>
+
+                    {/* Booking Date */}
+                    <td className="py-3.5 px-4 text-muted-foreground whitespace-nowrap">
+                      {formatDate(b.createdAt)}
+                    </td>
+
+                    {/* Total Amount */}
+                    <td className="py-3.5 px-4 font-bold text-foreground whitespace-nowrap">
+                      {formatCurrency(b.totalAmount)}
+                    </td>
+
+                    {/* Payment Status */}
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <Badge
+                        variant={b.paymentStatus === "Paid" ? "success" : "amber"}
+                        className="text-[10px]"
+                      >
+                        {b.paymentStatus === "Paid" ? "Paid (Escrow)" : "Unpaid"}
+                      </Badge>
+                    </td>
+
+                    {/* Booking Status */}
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      {getStatusBadge(b.status)}
+                    </td>
+
+                    {/* Actions */}
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {b.paymentStatus === "Unpaid" && b.status !== "Cancelled" && (
+                          <Button
+                            size="sm"
+                            disabled={payingId === b._id}
+                            onClick={() => handlePayNow(b._id)}
+                            className="bg-amber text-graphite hover:bg-amber/90 font-bold text-[11px] h-7 px-2.5 gap-1"
+                          >
+                            <CreditCard className="h-3 w-3" />
+                            <span>{payingId === b._id ? "..." : "Pay"}</span>
+                          </Button>
+                        )}
+
+                        {b.status === "Pending" && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleCancel(b._id)}
+                            className="text-[11px] h-7 px-2 text-destructive hover:bg-destructive/10"
+                          >
+                            Cancel
+                          </Button>
+                        )}
+
+                        {b.status === "Completed" && (
+                          <Link href={`/equipment/${b.equipmentId}`}>
+                            <Button size="sm" variant="outline" className="text-[11px] h-7 px-2 gap-1">
+                              <MessageSquare className="h-3 w-3 text-amber" />
+                              <span>Review</span>
+                            </Button>
+                          </Link>
+                        )}
+
+                        <Link href={`/equipment/${b.equipmentId}`}>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
+                            <Eye className="h-3.5 w-3.5" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       )}
     </div>
   );
