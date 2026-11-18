@@ -9,11 +9,11 @@ import {
   ShieldCheck,
   CheckCircle2,
   XCircle,
+  Mail,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { fetchApi } from "@/lib/api";
@@ -84,7 +84,7 @@ export default function AdminBookingsAuditPage() {
           <span>Audit & Transaction Ledger</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-          All Platform Rental Bookings
+          All Bookings (Manage Bookings)
         </h1>
         <p className="text-xs text-muted-foreground mt-1">
           Complete ledger of rental reservations, escrow payments, machine dispatch, and dispute audits.
@@ -109,9 +109,9 @@ export default function AdminBookingsAuditPage() {
       </div>
 
       {loading ? (
-        <div className="space-y-3">
-          {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="h-24 rounded-xl" />
+        <div className="space-y-2">
+          {[...Array(5)].map((_, i) => (
+            <Skeleton key={i} className="h-14 rounded-xl" />
           ))}
         </div>
       ) : bookings.length === 0 ? (
@@ -120,53 +120,91 @@ export default function AdminBookingsAuditPage() {
           <p className="text-sm font-semibold">No platform bookings found.</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {bookings.map((b) => (
-            <Card key={b._id} className="p-4 rounded-xl border-border bg-card shadow-xs hover:border-amber/40 transition-colors">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-bold text-sm text-foreground">{b.equipmentTitle}</h3>
-                    <Badge variant={b.status === "Confirmed" ? "info" : b.status === "Active" ? "success" : "outline"} className="text-[10px]">
-                      {b.status}
-                    </Badge>
-                    <Badge variant={b.paymentStatus === "Paid" ? "success" : "amber"} className="text-[10px]">
+        <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-xs">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-muted/60 text-muted-foreground border-b border-border uppercase font-bold text-[10px] tracking-wider">
+              <tr>
+                <th className="py-3.5 px-4">Customer Information</th>
+                <th className="py-3.5 px-4">Owner Information</th>
+                <th className="py-3.5 px-4">Equipment Name</th>
+                <th className="py-3.5 px-4">Rental Duration</th>
+                <th className="py-3.5 px-4">Booking Amount</th>
+                <th className="py-3.5 px-4">Payment Status</th>
+                <th className="py-3.5 px-4 text-right">Booking Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {bookings.map((b) => (
+                <tr key={b._id} className="hover:bg-muted/30 transition-colors">
+                  {/* Customer Information */}
+                  <td className="py-3.5 px-4">
+                    <div className="font-bold text-foreground">{b.customerName}</div>
+                    <span className="text-[10px] text-muted-foreground font-mono block">
+                      {b.customerEmail}
+                    </span>
+                  </td>
+
+                  {/* Owner Information */}
+                  <td className="py-3.5 px-4">
+                    <div className="font-semibold text-foreground">{b.ownerName || "Fleet Owner"}</div>
+                    <span className="text-[10px] text-muted-foreground block">
+                      Depot Dispatch
+                    </span>
+                  </td>
+
+                  {/* Equipment Name */}
+                  <td className="py-3.5 px-4 font-bold text-foreground">
+                    <span className="line-clamp-1">{b.equipmentTitle}</span>
+                    <span className="text-[10px] text-muted-foreground font-normal block">
+                      {b.deliveryOption}
+                    </span>
+                  </td>
+
+                  {/* Rental Duration */}
+                  <td className="py-3.5 px-4 text-muted-foreground">
+                    <div className="font-medium text-foreground">
+                      {b.totalDays} {b.totalDays === 1 ? "day" : "days"}
+                    </div>
+                    <span className="text-[10px] text-muted-foreground block">
+                      {formatDate(b.startDate)} → {formatDate(b.endDate)}
+                    </span>
+                  </td>
+
+                  {/* Booking Amount */}
+                  <td className="py-3.5 px-4 font-extrabold text-foreground">
+                    {formatCurrency(b.totalAmount)}
+                  </td>
+
+                  {/* Payment Status */}
+                  <td className="py-3.5 px-4">
+                    <Badge
+                      variant={b.paymentStatus === "Paid" ? "success" : "amber"}
+                      className="text-[10px] font-bold"
+                    >
                       {b.paymentStatus}
                     </Badge>
-                  </div>
+                  </td>
 
-                  <p className="text-xs text-muted-foreground">
-                    Contractor: <strong>{b.customerName}</strong> ({b.customerEmail}) • Owner: <strong>{b.ownerName}</strong>
-                  </p>
-
-                  <p className="text-xs text-muted-foreground">
-                    Dates: {formatDate(b.startDate)} to {formatDate(b.endDate)} ({b.totalDays} days) • Handover: {b.deliveryOption}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-border justify-between sm:justify-end">
-                  <div className="text-right">
-                    <span className="font-extrabold text-sm text-foreground block">
-                      {formatCurrency(b.totalAmount)}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">Escrow Amount</span>
-                  </div>
-
-                  <select
-                    value={b.status}
-                    onChange={(e) => handleUpdateStatus(b._id, e.target.value)}
-                    className="h-8 px-2 rounded-md border border-input bg-background text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-amber"
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Confirmed">Confirmed</option>
-                    <option value="Active">Active</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </select>
-                </div>
-              </div>
-            </Card>
-          ))}
+                  {/* Booking Status / Actions */}
+                  <td className="py-3.5 px-4 text-right">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <select
+                        value={b.status}
+                        onChange={(e) => handleUpdateStatus(b._id, e.target.value)}
+                        className="h-8 px-2 rounded-md border border-input bg-background text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-amber"
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Active">Active</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
