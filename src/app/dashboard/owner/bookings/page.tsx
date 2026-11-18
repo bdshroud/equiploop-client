@@ -6,10 +6,8 @@ import {
   CheckCircle2,
   XCircle,
   Truck,
-  MapPin,
   Phone,
   Mail,
-  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +27,7 @@ interface OwnerBooking {
   startDate: string;
   endDate: string;
   totalDays: number;
+  requiredQuantity?: number;
   totalAmount: number;
   status: "Pending" | "Confirmed" | "Active" | "Completed" | "Cancelled";
   paymentStatus: "Unpaid" | "Paid" | "Refunded";
@@ -71,24 +70,41 @@ export default function OwnerBookingsPage() {
     }
   };
 
+  const getStatusBadge = (status: OwnerBooking["status"]) => {
+    switch (status) {
+      case "Pending":
+        return <Badge variant="secondary" className="bg-amber/15 text-amber border-amber/30 text-[10px]">Pending</Badge>;
+      case "Confirmed":
+        return <Badge variant="info" className="text-[10px]">Confirmed</Badge>;
+      case "Active":
+        return <Badge variant="success" className="text-[10px]">Active on Site</Badge>;
+      case "Completed":
+        return <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-500/30 text-[10px]">Completed</Badge>;
+      case "Cancelled":
+        return <Badge variant="destructive" className="text-[10px]">Cancelled</Badge>;
+      default:
+        return <Badge variant="outline" className="text-[10px]">{status}</Badge>;
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
         <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
-          Contractor Inquiries & Dispatch
+          Owner Fleet Management
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-          Rental Booking Requests
+          My Equipment Rental
         </h1>
         <p className="text-xs text-muted-foreground mt-1">
-          Review contractor job-site requests, approve reservations, verify Stripe escrow, and manage handover.
+          Review all equipment rentals for your machines in tabular format.
         </p>
       </div>
 
       {loading ? (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-2xl" />
+            <Skeleton key={i} className="h-16 rounded-xl" />
           ))}
         </div>
       ) : bookings.length === 0 ? (
@@ -96,107 +112,134 @@ export default function OwnerBookingsPage() {
           <div className="h-12 w-12 rounded-full bg-amber/15 text-amber mx-auto flex items-center justify-center mb-3">
             <CalendarCheck className="h-6 w-6" />
           </div>
-          <h3 className="font-bold text-lg text-foreground">No Rental Inquiries Yet</h3>
+          <h3 className="font-bold text-lg text-foreground">No Equipment Rentals Yet</h3>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1">
-            As contractors book your listed machinery, their dispatch requests and dates will appear here for review.
+            When contractors book your equipment, rental duration, quantity, and payment statuses will display here.
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {bookings.map((b) => (
-            <Card key={b._id} className="p-5 rounded-2xl border-border bg-card shadow-xs space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-border/60">
-                <div>
-                  <h3 className="font-bold text-base text-foreground leading-snug">
-                    {b.equipmentTitle}
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                    <span>
-                      Dates: <strong className="text-foreground">{formatDate(b.startDate)}</strong> to{" "}
-                      <strong className="text-foreground">{formatDate(b.endDate)}</strong> ({b.totalDays} day{b.totalDays > 1 ? "s" : ""})
-                    </span>
-                    <span>•</span>
-                    <span>Total: <strong className="text-foreground">{formatCurrency(b.totalAmount)}</strong></span>
-                  </div>
-                </div>
+        /* Table Format per Assignment Specification */
+        <Card className="rounded-2xl border-border bg-card shadow-xs overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-muted/60 text-muted-foreground font-semibold border-b border-border uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th className="py-3 px-4">Customer Information</th>
+                  <th className="py-3 px-4">Equipment Information</th>
+                  <th className="py-3 px-4">Rental Duration</th>
+                  <th className="py-3 px-4">Required Quantity</th>
+                  <th className="py-3 px-4">Booking Amount</th>
+                  <th className="py-3 px-4">Payment Status</th>
+                  <th className="py-3 px-4">Booking Status</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {bookings.map((b) => (
+                  <tr key={b._id} className="hover:bg-muted/30 transition-colors">
+                    {/* Customer Information */}
+                    <td className="py-3.5 px-4">
+                      <div className="space-y-0.5">
+                        <div className="font-bold text-foreground">{b.customerName}</div>
+                        <div className="text-[11px] text-muted-foreground">{b.customerEmail}</div>
+                        {b.customerPhone && (
+                          <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                            <Phone className="h-3 w-3 text-amber" />
+                            <span>{b.customerPhone}</span>
+                          </div>
+                        )}
+                      </div>
+                    </td>
 
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant={b.status === "Confirmed" ? "info" : b.status === "Active" ? "success" : "outline"} className="text-xs">
-                    {b.status}
-                  </Badge>
-                  <Badge variant={b.paymentStatus === "Paid" ? "success" : "amber"} className="text-xs">
-                    {b.paymentStatus === "Paid" ? "Escrow Funded (Stripe)" : "Unpaid"}
-                  </Badge>
-                </div>
-              </div>
+                    {/* Equipment Information */}
+                    <td className="py-3.5 px-4 font-bold text-foreground">
+                      <span className="line-clamp-1 max-w-[180px]">{b.equipmentTitle}</span>
+                      <span className="text-[10px] font-normal text-muted-foreground block">
+                        Handover: {b.deliveryOption}
+                      </span>
+                    </td>
 
-              {/* Contractor & Dispatch Info */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-foreground">Contractor:</span>
-                  <span>{b.customerName}</span>
-                </div>
-                {b.customerPhone && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-3.5 w-3.5 text-amber" />
-                    <span>{b.customerPhone}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <Truck className="h-3.5 w-3.5 text-amber" />
-                  <span>{b.deliveryOption} {b.deliveryAddress ? `(${b.deliveryAddress})` : ""}</span>
-                </div>
-              </div>
+                    {/* Rental Duration */}
+                    <td className="py-3.5 px-4 text-muted-foreground whitespace-nowrap">
+                      <div>{formatDate(b.startDate)} to {formatDate(b.endDate)}</div>
+                      <div className="text-[10px] font-semibold text-foreground">({b.totalDays} day{b.totalDays > 1 ? "s" : ""})</div>
+                    </td>
 
-              {/* Status Action Buttons */}
-              <div className="pt-2 flex items-center gap-2 flex-wrap justify-end">
-                {b.status === "Pending" && (
-                  <>
-                    <Button
-                      size="sm"
-                      onClick={() => handleUpdateStatus(b._id, "Confirmed")}
-                      className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-semibold h-8"
-                    >
-                      <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-                      Approve Booking
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleUpdateStatus(b._id, "Cancelled")}
-                      className="text-xs text-destructive hover:bg-destructive/10 font-semibold h-8"
-                    >
-                      <XCircle className="h-3.5 w-3.5 mr-1" />
-                      Reject
-                    </Button>
-                  </>
-                )}
+                    {/* Required Quantity */}
+                    <td className="py-3.5 px-4 font-semibold text-foreground whitespace-nowrap">
+                      {b.requiredQuantity || 1} unit(s)
+                    </td>
 
-                {b.status === "Confirmed" && (
-                  <Button
-                    size="sm"
-                    onClick={() => handleUpdateStatus(b._id, "Active")}
-                    className="bg-amber text-graphite hover:bg-amber/90 text-xs font-bold h-8"
-                  >
-                    <Truck className="h-3.5 w-3.5 mr-1" />
-                    Mark Dispatched / On Site
-                  </Button>
-                )}
+                    {/* Booking Amount */}
+                    <td className="py-3.5 px-4 font-bold text-foreground whitespace-nowrap">
+                      {formatCurrency(b.totalAmount)}
+                    </td>
 
-                {b.status === "Active" && (
-                  <Button
-                    size="sm"
-                    onClick={() => handleUpdateStatus(b._id, "Completed")}
-                    className="bg-purple-600 text-white hover:bg-purple-700 text-xs font-semibold h-8"
-                  >
-                    <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-                    Mark Returned / Completed
-                  </Button>
-                )}
-              </div>
-            </Card>
-          ))}
-        </div>
+                    {/* Payment Status */}
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <Badge
+                        variant={b.paymentStatus === "Paid" ? "success" : "amber"}
+                        className="text-[10px]"
+                      >
+                        {b.paymentStatus === "Paid" ? "Paid (Escrow)" : "Unpaid"}
+                      </Badge>
+                    </td>
+
+                    {/* Booking Status */}
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      {getStatusBadge(b.status)}
+                    </td>
+
+                    {/* Actions: Approve, Reject, Dispatched, Complete */}
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {b.status === "Pending" && (
+                          <>
+                            <Button
+                              size="sm"
+                              onClick={() => handleUpdateStatus(b._id, "Confirmed")}
+                              className="bg-emerald-600 text-white hover:bg-emerald-700 text-[11px] h-7 px-2 font-semibold"
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleUpdateStatus(b._id, "Cancelled")}
+                              className="text-[11px] h-7 px-2 text-destructive hover:bg-destructive/10 font-semibold"
+                            >
+                              Reject
+                            </Button>
+                          </>
+                        )}
+
+                        {b.status === "Confirmed" && (
+                          <Button
+                            size="sm"
+                            onClick={() => handleUpdateStatus(b._id, "Active")}
+                            className="bg-amber text-graphite hover:bg-amber/90 text-[11px] h-7 px-2 font-bold"
+                          >
+                            Dispatch
+                          </Button>
+                        )}
+
+                        {b.status === "Active" && (
+                          <Button
+                            size="sm"
+                            onClick={() => handleUpdateStatus(b._id, "Completed")}
+                            className="bg-purple-600 text-white hover:bg-purple-700 text-[11px] h-7 px-2 font-semibold"
+                          >
+                            Mark Returned
+                          </Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       )}
     </div>
   );
