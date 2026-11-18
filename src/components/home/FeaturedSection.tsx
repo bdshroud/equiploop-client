@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { EquipmentCard, EquipmentItem } from "@/components/equipment/EquipmentCard";
 import { fetchApi } from "@/lib/api";
@@ -10,11 +11,15 @@ const FALLBACK_FEATURED: EquipmentItem[] = [
   {
     _id: "feat_1",
     title: "Caterpillar 305.5E2 Mini Hydraulic Excavator",
-    category: "Heavy Machinery",
+    equipmentName: "Caterpillar 305.5E2 Mini Hydraulic Excavator",
+    category: "Construction Equipment",
+    rentalType: "Daily",
     description: "Compact hydraulic excavator engineered for tight radius earthmoving, trenching, and utility works.",
     images: ["https://images.unsplash.com/photo-1579847188804-ecba0e2ea330?auto=format&fit=crop&w=800&q=80"],
     pricePerDay: 350,
+    rentalPrice: 350,
     securityDeposit: 500,
+    availableQuantity: 3,
     condition: "Excellent",
     location: { city: "Austin", state: "TX" },
     availability: true,
@@ -25,51 +30,103 @@ const FALLBACK_FEATURED: EquipmentItem[] = [
   },
   {
     _id: "feat_2",
-    title: "Bobcat S650 Skid-Steer Loader",
-    category: "Heavy Machinery",
-    description: "High-lift vertical path loader designed for heavy lifting, grading, site clearance, and agricultural duty.",
-    images: ["https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80"],
-    pricePerDay: 280,
+    title: "Sony FX6 Full-Frame Cinema Camera Kit",
+    equipmentName: "Sony FX6 Full-Frame Cinema Camera Kit",
+    category: "Photography Equipment",
+    rentalType: "Daily",
+    description: "Full-frame cinema camera with 4K 120p, 10-bit 4:2:2 DCI 4K output, electronic variable ND filter, and G-Master lenses.",
+    images: ["https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80"],
+    pricePerDay: 195,
+    rentalPrice: 195,
+    securityDeposit: 300,
+    availableQuantity: 4,
+    condition: "Brand New",
+    location: { city: "Austin", state: "TX" },
+    availability: true,
+    status: "Approved",
+    isFeatured: true,
+    rating: 5.0,
+    totalReviews: 18,
+  },
+  {
+    _id: "feat_3",
+    title: "Ford F-550 Super Duty 16ft Flatbed Dump Truck",
+    equipmentName: "Ford F-550 Super Duty 16ft Flatbed Dump Truck",
+    category: "Vehicles & Transportation",
+    rentalType: "Daily",
+    description: "Commercial flatbed dump truck with 6.7L V8 Turbo Diesel, hydraulic scissor hoist, and integrated steel racks.",
+    images: ["https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&w=800&q=80"],
+    pricePerDay: 220,
+    rentalPrice: 220,
     securityDeposit: 400,
+    availableQuantity: 2,
     condition: "Excellent",
     location: { city: "Houston", state: "TX" },
     availability: true,
     status: "Approved",
     isFeatured: true,
     rating: 4.8,
-    totalReviews: 9,
-  },
-  {
-    _id: "feat_3",
-    title: "Genie GS-1930 Electric Scissor Lift",
-    category: "Material Handling",
-    description: "Quiet, zero-emission electric scissor lift capable of passing through standard single doorways.",
-    images: ["https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80"],
-    pricePerDay: 145,
-    securityDeposit: 250,
-    condition: "Excellent",
-    location: { city: "Dallas", state: "TX" },
-    availability: true,
-    status: "Approved",
-    isFeatured: true,
-    rating: 5.0,
-    totalReviews: 8,
+    totalReviews: 12,
   },
   {
     _id: "feat_4",
-    title: "Honda EU7000iS Inverter Generator 7000W Fuel Injected",
-    category: "Generators & Power",
-    description: "Super quiet fuel-injected portable inverter generator providing clean, stable power for sensitive equipment.",
-    images: ["https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80"],
-    pricePerDay: 95,
-    securityDeposit: 150,
+    title: "John Deere 3038E Compact Agricultural Utility Tractor",
+    equipmentName: "John Deere 3038E Compact Agricultural Utility Tractor",
+    category: "Agriculture Equipment",
+    rentalType: "Weekly",
+    description: "Four-wheel-drive compact utility tractor with front loader, hydrostatic transmission, and rear rotary cutter.",
+    images: ["https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=800&q=80"],
+    pricePerDay: 180,
+    rentalPrice: 180,
+    securityDeposit: 350,
+    availableQuantity: 2,
     condition: "Excellent",
+    location: { city: "San Antonio", state: "TX" },
+    availability: true,
+    status: "Approved",
+    isFeatured: true,
+    rating: 4.9,
+    totalReviews: 10,
+  },
+  {
+    _id: "feat_5",
+    title: "JBL PRX ONE 2,000W Powered Column Concert PA System",
+    equipmentName: "JBL PRX ONE 2,000W Powered Column Concert PA System",
+    category: "Event Equipment",
+    rentalType: "Daily",
+    description: "High-output column array system with built-in 7-channel digital mixer, DSP effects, Bluetooth audio, and wireless mics.",
+    images: ["https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80"],
+    pricePerDay: 130,
+    rentalPrice: 130,
+    securityDeposit: 200,
+    availableQuantity: 5,
+    condition: "Excellent",
+    location: { city: "Austin", state: "TX" },
+    availability: true,
+    status: "Approved",
+    isFeatured: true,
+    rating: 4.9,
+    totalReviews: 11,
+  },
+  {
+    _id: "feat_6",
+    title: "FLIR T865 High-Performance Thermal Imaging Camera",
+    equipmentName: "FLIR T865 High-Performance Thermal Imaging Camera",
+    category: "Electronics",
+    rentalType: "Daily",
+    description: "Non-contact thermal camera with 640x480 IR resolution, 1-Touch Level/Span, laser autofocus, and temp range to 1500°C.",
+    images: ["https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80"],
+    pricePerDay: 165,
+    rentalPrice: 165,
+    securityDeposit: 300,
+    availableQuantity: 3,
+    condition: "Brand New",
     location: { city: "Dallas", state: "TX" },
     availability: true,
     status: "Approved",
     isFeatured: true,
     rating: 5.0,
-    totalReviews: 15,
+    totalReviews: 7,
   },
 ];
 
@@ -82,10 +139,11 @@ export function FeaturedSection() {
       try {
         const res = await fetchApi<{ success: boolean; data: EquipmentItem[] }>("/equipment/featured");
         if (res.data && res.data.length > 0) {
-          setItems(res.data);
+          // Strictly take 6 items
+          setItems(res.data.slice(0, 6));
         }
       } catch (err) {
-        // Keeps fallback items if server not yet started
+        // Keeps fallback items if server is starting
       } finally {
         setLoading(false);
       }
@@ -104,7 +162,7 @@ export function FeaturedSection() {
               <span>Handpicked Machinery</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-              Featured Fleet Inventory
+              Featured Fleet Equipment (Top 6)
             </h2>
             <p className="text-sm text-muted-foreground mt-1 max-w-xl">
               Commercial-grade equipment maintained to strict OEM specifications and ready for instant booking.
@@ -120,10 +178,19 @@ export function FeaturedSection() {
           </Link>
         </div>
 
-        {/* Featured Items Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {items.map((item) => (
-            <EquipmentCard key={item._id} item={item} />
+        {/* Featured Items Grid with Framer Motion Animation */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((item, idx) => (
+            <motion.div
+              key={item._id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.08 }}
+              className="h-full"
+            >
+              <EquipmentCard item={item} requireAuthForDetails={true} />
+            </motion.div>
           ))}
         </div>
       </div>
