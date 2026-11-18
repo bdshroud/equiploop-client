@@ -7,11 +7,8 @@ import {
   PlusCircle,
   Edit,
   Trash2,
-  CheckCircle2,
-  XCircle,
-  Search,
-  ExternalLink,
   Eye,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,22 +49,6 @@ export default function OwnerEquipmentListPage() {
     loadOwnerEquipment();
   }, [loadOwnerEquipment]);
 
-  const toggleAvailability = async (item: EquipmentItem) => {
-    try {
-      const updated = !item.availability;
-      await fetchApi(`/equipment/${item._id}`, {
-        method: "PUT",
-        body: JSON.stringify({ availability: updated }),
-      });
-      setItems((prev) =>
-        prev.map((i) => (i._id === item._id ? { ...i, availability: updated } : i))
-      );
-      toast.success(`Machine marked as ${updated ? "Available" : "Unavailable"}`);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update availability");
-    }
-  };
-
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to permanently delete this equipment listing?")) return;
 
@@ -81,7 +62,7 @@ export default function OwnerEquipmentListPage() {
   };
 
   const filteredItems = items.filter((item) =>
-    item.title.toLowerCase().includes(search.toLowerCase()) ||
+    (item.title || item.equipmentName || "").toLowerCase().includes(search.toLowerCase()) ||
     item.category.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -94,17 +75,17 @@ export default function OwnerEquipmentListPage() {
             Machine Fleet Management
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-            My Equipment Fleet
+            My Equipment
           </h1>
           <p className="text-xs text-muted-foreground mt-1">
-            Manage listing status, edit machine specs, toggle job-site availability, and monitor pricing.
+            Displaying all equipment added by your account in tabular format.
           </p>
         </div>
 
         <Link href="/dashboard/owner/equipment/new">
-          <Button size="sm" className="bg-amber text-graphite hover:bg-amber/90 font-bold gap-1.5 shadow-sm">
+          <Button size="sm" className="bg-amber text-graphite hover:bg-amber/90 font-bold gap-1.5 shadow-sm text-xs">
             <PlusCircle className="h-4 w-4" />
-            <span>List New Machine</span>
+            <span>Add Equipment</span>
           </Button>
         </Link>
       </div>
@@ -114,7 +95,7 @@ export default function OwnerEquipmentListPage() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
-          placeholder="Filter by title or equipment class..."
+          placeholder="Filter by name or category..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-9 text-xs"
@@ -122,9 +103,9 @@ export default function OwnerEquipmentListPage() {
       </div>
 
       {loading ? (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
-            <Skeleton key={i} className="h-24 rounded-2xl" />
+            <Skeleton key={i} className="h-16 rounded-xl" />
           ))}
         </div>
       ) : filteredItems.length === 0 ? (
@@ -132,84 +113,125 @@ export default function OwnerEquipmentListPage() {
           <div className="h-12 w-12 rounded-full bg-amber/15 text-amber mx-auto flex items-center justify-center mb-3">
             <Layers className="h-6 w-6" />
           </div>
-          <h3 className="font-bold text-lg text-foreground">No Fleet Machines Listed</h3>
+          <h3 className="font-bold text-lg text-foreground">No Equipment Listed Yet</h3>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-6">
-            You haven&apos;t added any machinery to your fleet yet. Start listing excavators, lifts, generators, or tools today.
+            You haven&apos;t added any machinery to your fleet yet. Start listing excavators, cameras, vehicles, or tools.
           </p>
           <Link href="/dashboard/owner/equipment/new">
             <Button size="sm" className="bg-amber text-graphite hover:bg-amber/90 font-bold">
-              Add Your First Equipment Listing
+              Add Your First Equipment
             </Button>
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
-          {filteredItems.map((item) => (
-            <Card key={item._id} className="p-4 sm:p-5 rounded-2xl border-border bg-card shadow-xs hover:border-amber/40 transition-colors">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="h-16 w-20 rounded-xl overflow-hidden bg-muted shrink-0 border border-border">
-                    <img
-                      src={item.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80"}
-                      alt={item.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
+        /* Table Format per Assignment Specification */
+        <Card className="rounded-2xl border-border bg-card shadow-xs overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-muted/60 text-muted-foreground font-semibold border-b border-border uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th className="py-3 px-4">Equipment Name</th>
+                  <th className="py-3 px-4">Category</th>
+                  <th className="py-3 px-4">Rental Price</th>
+                  <th className="py-3 px-4">Available Quantity</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {filteredItems.map((item) => (
+                  <tr key={item._id} className="hover:bg-muted/30 transition-colors">
+                    {/* Equipment Name */}
+                    <td className="py-3.5 px-4 font-bold text-foreground">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={item.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"}
+                          alt={item.title}
+                          className="h-9 w-12 rounded object-cover border border-border shrink-0"
+                        />
+                        <span className="line-clamp-1 max-w-[220px]">
+                          {item.equipmentName || item.title}
+                        </span>
+                      </div>
+                    </td>
 
-                  <div>
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    {/* Category */}
+                    <td className="py-3.5 px-4 text-muted-foreground whitespace-nowrap">
+                      <Badge variant="secondary" className="text-[10px]">
                         {item.category}
-                      </span>
-                      <Badge variant={item.status === "Approved" ? "success" : "secondary"} className="text-[10px]">
-                        {item.status}
                       </Badge>
-                      <Badge variant={item.availability ? "amber" : "destructive"} className="text-[10px]">
-                        {item.availability ? "Available" : "Unavailable / Booked"}
+                    </td>
+
+                    {/* Rental Price */}
+                    <td className="py-3.5 px-4 font-bold text-foreground whitespace-nowrap">
+                      {formatCurrency(item.rentalPrice || item.pricePerDay || 0)} / {item.rentalType?.toLowerCase() || "day"}
+                    </td>
+
+                    {/* Available Quantity */}
+                    <td className="py-3.5 px-4 text-muted-foreground whitespace-nowrap">
+                      <span className="font-semibold text-foreground">
+                        {item.availableQuantity !== undefined ? item.availableQuantity : 1}
+                      </span> unit(s)
+                    </td>
+
+                    {/* Status (default pending) */}
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <Badge
+                        variant={item.status === "Approved" ? "success" : item.status === "Rejected" ? "destructive" : "secondary"}
+                        className="text-[10px]"
+                      >
+                        {item.status || "Pending"}
                       </Badge>
-                    </div>
+                    </td>
 
-                    <h3 className="font-bold text-base text-foreground leading-snug">
-                      {item.title}
-                    </h3>
+                    {/* Actions: Update, Delete, View Details */}
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Link href={`/equipment/${item._id}`} target="_blank">
+                          <Button size="sm" variant="ghost" className="h-7 px-2 text-[11px] text-muted-foreground hover:text-foreground">
+                            <Eye className="h-3 w-3 mr-1" />
+                            <span>View</span>
+                          </Button>
+                        </Link>
 
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Daily Rate: <strong className="text-foreground">{formatCurrency(item.pricePerDay)}</strong> • Deposit: {formatCurrency(item.securityDeposit || 0)}
-                    </p>
-                  </div>
-                </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const newPrice = prompt("Enter updated rental price:", String(item.pricePerDay || item.rentalPrice || 100));
+                            if (newPrice && !isNaN(Number(newPrice))) {
+                              fetchApi(`/equipment/${item._id}`, {
+                                method: "PUT",
+                                body: JSON.stringify({ pricePerDay: Number(newPrice), rentalPrice: Number(newPrice) }),
+                              }).then(() => {
+                                toast.success("Price updated successfully");
+                                loadOwnerEquipment();
+                              });
+                            }
+                          }}
+                          className="h-7 px-2 text-[11px] font-semibold"
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          <span>Update</span>
+                        </Button>
 
-                <div className="flex items-center gap-2 justify-end pt-3 sm:pt-0 border-t sm:border-t-0 border-border">
-                  <Link href={`/equipment/${item._id}`} target="_blank">
-                    <Button variant="ghost" size="sm" className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground">
-                      <Eye className="h-3.5 w-3.5 mr-1" />
-                      View
-                    </Button>
-                  </Link>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => toggleAvailability(item)}
-                    className="h-8 px-2.5 text-xs font-semibold"
-                  >
-                    {item.availability ? "Set Booked" : "Set Available"}
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(item._id)}
-                    className="h-8 px-2 text-destructive hover:bg-destructive/10"
-                    title="Delete Machine"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDelete(item._id)}
+                          className="h-7 px-2 text-[11px] text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          <span>Delete</span>
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       )}
     </div>
   );
