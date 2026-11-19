@@ -1,12 +1,43 @@
 import { betterAuth } from "better-auth";
-import { MongoClient } from "mongodb";
+import { MongoClient, Db } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { jwt } from "better-auth/plugins";
 
-const client = new MongoClient(process.env.DB_URI || "mongodb://localhost:27017");
-const db = client.db(process.env.DB_NAME || "equiploop");
+const uri = process.env.DB_URI || "mongodb://localhost:27017";
+const dbName = process.env.DB_NAME || "equiploop";
+
+// Global MongoClient caching across hot-reloads and Vercel serverless lambdas
+const globalForMongo = globalThis as unknown as {
+  _mongoClient?: MongoClient;
+  _mongoDb?: Db;
+};
+
+if (!globalForMongo._mongoClient) {
+  globalForMongo._mongoClient = new MongoClient(uri, {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 5000,
+    connectTimeoutMS: 10000,
+  });
+}
+
+const client = globalForMongo._mongoClient;
+const db = client.db(dbName);
+
+const baseURL =
+  process.env.BETTER_AUTH_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
 export const auth = betterAuth({
+  baseURL,
+  secret: process.env.BETTER_AUTH_SECRET,
+  trustedOrigins: [
+    baseURL,
+    process.env.BETTER_AUTH_URL,
+    process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    process.env.NEXT_PUBLIC_API_URL,
+    "http://localhost:3000",
+  ].filter(Boolean) as string[],
   database: mongodbAdapter(db, { client }),
   user: {
     additionalFields: {

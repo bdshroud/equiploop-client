@@ -97,6 +97,7 @@ export async function fetchApi<T = any>(
   };
 
   const response = await fetch(url, {
+    credentials: "include",
     ...options,
     headers,
   });
