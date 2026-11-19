@@ -15,6 +15,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { formatCurrency } from "@/lib/utils";
 import { useSession } from "@/lib/auth-client";
 import { fetchApi } from "@/lib/api";
@@ -26,6 +33,49 @@ export default function OwnerEquipmentListPage() {
   const [items, setItems] = React.useState<EquipmentItem[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [search, setSearch] = React.useState("");
+
+  // Edit equipment dialog state
+  const [editingItem, setEditingItem] = React.useState<EquipmentItem | null>(null);
+  const [editTitle, setEditTitle] = React.useState("");
+  const [editPrice, setEditPrice] = React.useState<number>(0);
+  const [editQuantity, setEditQuantity] = React.useState<number>(1);
+  const [editCategory, setEditCategory] = React.useState("");
+  const [updating, setUpdating] = React.useState(false);
+
+  const openUpdateModal = (item: EquipmentItem) => {
+    setEditingItem(item);
+    setEditTitle(item.title || item.equipmentName || "");
+    setEditPrice(item.rentalPrice || item.pricePerDay || 0);
+    setEditQuantity(item.availableQuantity !== undefined ? item.availableQuantity : 1);
+    setEditCategory(item.category || "");
+  };
+
+  const handleSaveUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem) return;
+
+    try {
+      setUpdating(true);
+      await fetchApi(`/equipment/${editingItem._id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          title: editTitle.trim(),
+          equipmentName: editTitle.trim(),
+          rentalPrice: Number(editPrice),
+          pricePerDay: Number(editPrice),
+          availableQuantity: Number(editQuantity),
+          category: editCategory,
+        }),
+      });
+      toast.success("Equipment updated successfully");
+      setEditingItem(null);
+      loadOwnerEquipment();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update equipment");
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   const loadOwnerEquipment = React.useCallback(async () => {
     if (!session?.user?.id) return;
@@ -197,18 +247,7 @@ export default function OwnerEquipmentListPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => {
-                            const newPrice = prompt("Enter updated rental price:", String(item.pricePerDay || item.rentalPrice || 100));
-                            if (newPrice && !isNaN(Number(newPrice))) {
-                              fetchApi(`/equipment/${item._id}`, {
-                                method: "PUT",
-                                body: JSON.stringify({ pricePerDay: Number(newPrice), rentalPrice: Number(newPrice) }),
-                              }).then(() => {
-                                toast.success("Price updated successfully");
-                                loadOwnerEquipment();
-                              });
-                            }
-                          }}
+                          onClick={() => openUpdateModal(item)}
                           className="h-7 px-2 text-[11px] font-semibold"
                         >
                           <Edit className="h-3 w-3 mr-1" />
@@ -232,6 +271,94 @@ export default function OwnerEquipmentListPage() {
             </table>
           </div>
         </Card>
+      )}
+
+      {/* Update Equipment Dialog Modal */}
+      {editingItem && (
+        <Dialog open={!!editingItem} onOpenChange={(open) => !open && setEditingItem(null)}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-base font-bold flex items-center gap-2">
+                <Edit className="h-4 w-4 text-amber" />
+                <span>Update Equipment Listing</span>
+              </DialogTitle>
+            </DialogHeader>
+
+            <form onSubmit={handleSaveUpdate} className="space-y-3 pt-2">
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1">Equipment Title</label>
+                <Input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  required
+                  className="text-xs"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-foreground block mb-1">Rental Price ($/day)</label>
+                  <Input
+                    type="number"
+                    value={editPrice}
+                    onChange={(e) => setEditPrice(Number(e.target.value))}
+                    required
+                    min="1"
+                    className="text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-foreground block mb-1">Available Units</label>
+                  <Input
+                    type="number"
+                    value={editQuantity}
+                    onChange={(e) => setEditQuantity(Number(e.target.value))}
+                    required
+                    min="0"
+                    className="text-xs"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1">Category</label>
+                <select
+                  value={editCategory}
+                  onChange={(e) => setEditCategory(e.target.value)}
+                  className="w-full h-9 px-3 rounded-md border border-input bg-background text-xs"
+                >
+                  <option value="Construction Equipment">Construction Equipment</option>
+                  <option value="Photography Equipment">Photography Equipment</option>
+                  <option value="Vehicles & Transportation">Vehicles & Transportation</option>
+                  <option value="Agriculture Equipment">Agriculture Equipment</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Event Equipment">Event Equipment</option>
+                </select>
+              </div>
+
+              <DialogFooter className="pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEditingItem(null)}
+                  className="text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={updating}
+                  className="bg-amber text-graphite hover:bg-amber/90 font-bold text-xs"
+                >
+                  {updating ? "Saving..." : "Save Changes"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

@@ -104,7 +104,7 @@ export default function DashboardLayout({
     { label: "Platform Overview", href: "/dashboard/admin", icon: ShieldCheck },
     { label: "All Users", href: "/dashboard/admin/users", icon: Users },
     { label: "All Equipment", href: "/dashboard/admin/equipment", icon: Layers },
-    { label: "All Bookings", href: "/dashboard/admin/bookings", icon: CalendarCheck },
+    { label: "All Rentals", href: "/dashboard/admin/rentals", icon: CalendarCheck },
     { label: "Profile", href: "/dashboard/profile", icon: User },
   ];
 

@@ -111,12 +111,13 @@ function EquipmentDetailContent() {
     }
   }, [id, session?.user]);
 
-  // Private route check: redirect to login if session loaded and no user
+  // Private route check per assignment requirement: redirect to login if session checked and no user
   React.useEffect(() => {
-    if (!sessionLoading && !session?.user && !loading) {
-      // Allow viewing or redirect
+    if (!sessionLoading && !session?.user) {
+      toast.info("Please sign in to access equipment details and rental booking");
+      router.replace(`/login?redirect=/equipment/${id}`);
     }
-  }, [sessionLoading, session, loading]);
+  }, [sessionLoading, session, router, id]);
 
   // Calculations for booking duration and quantity
   const calculateDays = () => {

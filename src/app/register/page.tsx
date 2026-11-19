@@ -3,11 +3,12 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Wrench, Mail, Lock, User, Phone, MapPin, CheckCircle2, AlertCircle } from "lucide-react";
+import { Wrench, Mail, Lock, User, Phone, MapPin, CheckCircle2, AlertCircle, Camera, Upload } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { uploadToImgBB } from "@/lib/upload";
 import { toast } from "sonner";
 
 export default function RegisterPage() {
@@ -15,11 +16,36 @@ export default function RegisterPage() {
 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [image, setImage] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [address, setAddress] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = React.useState(false);
   const [socialLoading, setSocialLoading] = React.useState(false);
+  const photoInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingPhoto(true);
+      toast.info("Uploading photo to ImgBB...");
+      const res = await uploadToImgBB(file);
+      if (res.success && res.url) {
+        setImage(res.url);
+        toast.success("Photo uploaded successfully!");
+      } else {
+        toast.error(res.error || "Failed to upload photo");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload photo");
+    } finally {
+      setUploadingPhoto(false);
+      if (photoInputRef.current) photoInputRef.current.value = "";
+    }
+  };
 
   // Validate assignment password rule: min 6 chars, uppercase, lowercase
   const validatePassword = (pass: string) => {
@@ -48,6 +74,7 @@ export default function RegisterPage() {
         name: name.trim(),
         email: email.trim(),
         password,
+        image: image.trim() || undefined,
         // @ts-ignore
         phone: phone.trim(),
         // @ts-ignore
@@ -172,6 +199,51 @@ export default function RegisterPage() {
                   className="pl-9 text-xs"
                 />
               </div>
+            </div>
+
+            {/* Photo (direct image link or imgbb upload) per Assignment Spec */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-foreground">
+                  Photo (Direct Link or ImgBB Upload)
+                </label>
+                <div>
+                  <input
+                    ref={photoInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={uploadingPhoto}
+                    onClick={() => photoInputRef.current?.click()}
+                    className="h-6 text-[10px] px-2 font-semibold text-amber border-amber/40 hover:bg-amber/10"
+                  >
+                    <Upload className="h-3 w-3 mr-1" />
+                    {uploadingPhoto ? "Uploading..." : "Upload via ImgBB"}
+                  </Button>
+                </div>
+              </div>
+              <div className="relative">
+                <Camera className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="url"
+                  placeholder="https://images.unsplash.com/... or uploaded ImgBB URL"
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                  className="pl-9 text-xs"
+                />
+              </div>
+              {image && (
+                <div className="mt-1.5 flex items-center gap-2">
+                  <img src={image} alt="Preview" className="h-7 w-7 rounded-full object-cover border border-border" />
+                  <span className="text-[10px] text-muted-foreground truncate">Photo preview ready</span>
+                </div>
+              )}
             </div>
 
             {/* Password */}
