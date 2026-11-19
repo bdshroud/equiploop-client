@@ -586,27 +586,45 @@ function EquipmentBrowseContent() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="pt-8 border-t border-border flex items-center justify-between">
+              <div className="pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
                 <span className="text-xs text-muted-foreground">
-                  Page {page} of {totalPages}
+                  Showing page <strong className="text-foreground">{page}</strong> of <strong className="text-foreground">{totalPages}</strong> ({totalCount} items)
                 </span>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <Button
                     variant="outline"
                     size="sm"
                     disabled={page <= 1}
                     onClick={() => setPage(page - 1)}
-                    className="text-xs font-semibold"
+                    className="h-8 text-xs font-semibold"
                   >
                     Previous
                   </Button>
+
+                  {[...Array(totalPages)].map((_, i) => {
+                    const pNum = i + 1;
+                    return (
+                      <Button
+                        key={pNum}
+                        variant={page === pNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setPage(pNum)}
+                        className={`h-8 w-8 p-0 text-xs font-bold ${
+                          page === pNum ? "bg-amber text-graphite hover:bg-amber/90" : ""
+                        }`}
+                      >
+                        {pNum}
+                      </Button>
+                    );
+                  })}
+
                   <Button
                     variant="outline"
                     size="sm"
                     disabled={page >= totalPages}
                     onClick={() => setPage(page + 1)}
-                    className="text-xs font-semibold"
+                    className="h-8 text-xs font-semibold"
                   >
                     Next
                   </Button>
