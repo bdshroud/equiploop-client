@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { fetchApi } from "@/lib/api";
+import { uploadToImgBB } from "@/lib/upload";
 import { toast } from "sonner";
 
 const CATEGORIES = [
@@ -64,6 +65,8 @@ export default function NewEquipmentPage() {
   const [images, setImages] = React.useState<string[]>([
     "https://images.unsplash.com/photo-1579847188804-ecba0e2ea330?auto=format&fit=crop&w=800&q=80",
   ]);
+  const [uploadingImg, setUploadingImg] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
   const [loading, setLoading] = React.useState(false);
 
@@ -75,6 +78,30 @@ export default function NewEquipmentPage() {
 
   const removeImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingImg(true);
+      toast.info("Uploading image to ImgBB...");
+      const res = await uploadToImgBB(file);
+      if (res.success && res.url) {
+        setImages((prev) => [...prev, res.url]);
+        toast.success("Image successfully uploaded!");
+      } else {
+        toast.error(res.error || "Failed to upload image");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload image to ImgBB");
+    } finally {
+      setUploadingImg(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -361,17 +388,39 @@ export default function NewEquipmentPage() {
           </div>
         </Card>
 
-        {/* Photography */}
+        {/* Photography & ImgBB Upload */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
-          <h2 className="font-bold text-base text-foreground flex items-center gap-2">
-            <ImageIcon className="h-4 w-4 text-amber" />
-            <span>Equipment Image (Direct Link / Upload)</span>
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-bold text-base text-foreground flex items-center gap-2">
+              <ImageIcon className="h-4 w-4 text-amber" />
+              <span>Equipment Images (ImgBB Upload / Direct Link)</span>
+            </h2>
+            <div className="flex items-center gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="imgbb-file-upload"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={uploadingImg}
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs font-semibold border-amber/40 hover:bg-amber/10 text-amber"
+              >
+                {uploadingImg ? "Uploading to ImgBB..." : "Upload via ImgBB"}
+              </Button>
+            </div>
+          </div>
 
           <div className="flex gap-2">
             <Input
               type="url"
-              placeholder="Paste direct image link (e.g. imgbb, Unsplash, or CDN URL)"
+              placeholder="Or paste direct image URL (e.g. imgbb, Unsplash, or CDN URL)"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               className="text-xs"
@@ -383,7 +432,7 @@ export default function NewEquipmentPage() {
               variant="outline"
               className="shrink-0 text-xs font-semibold"
             >
-              Add Image
+              Add Link
             </Button>
           </div>
 

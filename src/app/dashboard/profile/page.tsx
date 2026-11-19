@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { User, Mail, Phone, MapPin, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { User, Mail, Phone, MapPin, ShieldCheck, CheckCircle2, Upload } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { fetchApi } from "@/lib/api";
+import { uploadToImgBB } from "@/lib/upload";
 import { toast } from "sonner";
 
 export default function ProfilePage() {
@@ -22,6 +23,32 @@ export default function ProfilePage() {
   const [address, setAddress] = React.useState("");
   const [image, setImage] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = React.useState(false);
+  const avatarInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingAvatar(true);
+      toast.info("Uploading avatar to ImgBB...");
+      const res = await uploadToImgBB(file);
+      if (res.success && res.url) {
+        setImage(res.url);
+        toast.success("Avatar uploaded! Remember to save changes.");
+      } else {
+        toast.error(res.error || "Failed to upload avatar");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload avatar");
+    } finally {
+      setUploadingAvatar(false);
+      if (avatarInputRef.current) {
+        avatarInputRef.current.value = "";
+      }
+    }
+  };
 
   React.useEffect(() => {
     async function loadProfile() {
@@ -173,12 +200,34 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-foreground block mb-1">
-                Avatar Photo URL
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-foreground">
+                  Avatar Photo (ImgBB Upload / Direct Link)
+                </label>
+                <div>
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={uploadingAvatar}
+                    onClick={() => avatarInputRef.current?.click()}
+                    className="h-7 text-[11px] px-2.5 font-semibold text-amber border-amber/40 hover:bg-amber/10"
+                  >
+                    <Upload className="h-3 w-3 mr-1" />
+                    {uploadingAvatar ? "Uploading..." : "Upload to ImgBB"}
+                  </Button>
+                </div>
+              </div>
               <Input
                 type="url"
-                placeholder="https://images.unsplash.com/..."
+                placeholder="https://images.unsplash.com/... or uploaded ImgBB URL"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
                 className="text-xs"

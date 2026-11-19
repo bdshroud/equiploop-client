@@ -17,6 +17,12 @@ import { EquipmentCard, EquipmentItem } from "@/components/equipment/EquipmentCa
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { fetchApi } from "@/lib/api";
 
 const CATEGORIES = [
@@ -121,8 +127,8 @@ function EquipmentBrowseContent() {
     loadEquipment();
   }, [loadEquipment]);
 
-  const handleFilterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleFilterSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     setPage(1);
     const params = new URLSearchParams();
     if (search.trim()) params.set("search", search.trim());
@@ -254,14 +260,155 @@ function EquipmentBrowseContent() {
           </div>
         </div>
 
+        {/* Mobile Filter Sheet Drawer */}
+        <Sheet open={showFiltersMobile} onOpenChange={setShowFiltersMobile}>
+          <SheetContent side="left" className="w-[320px] sm:w-[380px] p-6 overflow-y-auto">
+            <SheetHeader className="text-left pb-3 border-b border-border">
+              <SheetTitle className="font-bold text-base flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4 text-amber" />
+                Filter Equipment
+              </SheetTitle>
+            </SheetHeader>
+            <div className="py-4 space-y-6">
+              {/* Category Filter */}
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-2.5">
+                  Category
+                </label>
+                <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => {
+                        setCategory(cat);
+                        setPage(1);
+                      }}
+                      className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center justify-between ${
+                        category === cat
+                          ? "bg-amber/15 text-amber font-bold"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }`}
+                    >
+                      <span className="truncate">{cat}</span>
+                      {category === cat && (
+                        <span className="h-1.5 w-1.5 rounded-full bg-amber shrink-0" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Rental Type Filter */}
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-2">
+                  Rental Type
+                </label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {RENTAL_TYPES.map((rt) => (
+                    <button
+                      key={rt}
+                      type="button"
+                      onClick={() => {
+                        setRentalType(rt);
+                        setPage(1);
+                      }}
+                      className={`p-2 rounded-lg border text-xs font-semibold text-center transition-all ${
+                        rentalType === rt
+                          ? "border-amber bg-amber/15 text-amber"
+                          : "border-border bg-background text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {rt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Range Filter */}
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-2">
+                  Price Range ($)
+                </label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Min"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    className="h-8 text-xs bg-background"
+                  />
+                  <span className="text-xs text-muted-foreground">-</span>
+                  <Input
+                    type="number"
+                    placeholder="Max"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    className="h-8 text-xs bg-background"
+                  />
+                </div>
+              </div>
+
+              {/* Availability Filter */}
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-2">
+                  Availability
+                </label>
+                <div className="space-y-1.5">
+                  <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                    <input
+                      type="radio"
+                      name="avail-mobile"
+                      checked={availability === ""}
+                      onChange={() => setAvailability("")}
+                      className="text-amber focus:ring-amber"
+                    />
+                    <span>All Inventory</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                    <input
+                      type="radio"
+                      name="avail-mobile"
+                      checked={availability === "true"}
+                      onChange={() => setAvailability("true")}
+                      className="text-amber focus:ring-amber"
+                    />
+                    <span>Available In Stock Only</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={resetFilters}
+                  className="flex-1 text-xs"
+                >
+                  <RotateCcw className="h-3.5 w-3.5 mr-1" />
+                  Reset
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    handleFilterSubmit();
+                    setShowFiltersMobile(false);
+                  }}
+                  size="sm"
+                  className="flex-1 bg-amber text-graphite hover:bg-amber/90 font-bold text-xs"
+                >
+                  Apply
+                </Button>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+
         {/* Main Content Layout: Sidebar Filters + 3-Column Products Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar Filters */}
-          <aside
-            className={`space-y-6 ${
-              showFiltersMobile ? "block" : "hidden"
-            } lg:block lg:col-span-1`}
-          >
+          {/* Desktop Sidebar Filters */}
+          <aside className="hidden lg:block lg:col-span-1 space-y-6">
             <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-6">
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <span className="font-bold text-sm text-foreground flex items-center gap-1.5">

@@ -1,24 +1,84 @@
-import { authClient } from "./auth-client";
+let memoryJwt: string | null = null;
+let memoryJwtExpiresAt = 0;
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+// Resolve API base URL whether NEXT_PUBLIC_API_URL includes "/api" or not
+const rawUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_BASE_URL = rawUrl.endsWith("/api")
+  ? rawUrl
+  : `${rawUrl.replace(/\/+$/, "")}/api`;
 
-export async function getAuthHeader(): Promise<Record<string, string>> {
+/**
+ * Retrieves the current user's Better Auth JWT token.
+ * Better Auth with jwt() plugin provides an authenticated GET /api/auth/token endpoint.
+ */
+export async function getJwtToken(): Promise<string | null> {
   if (typeof window === "undefined") {
-    return {};
+    return null;
+  }
+
+  // Return cached token if valid (cache for 5 minutes)
+  if (memoryJwt && Date.now() < memoryJwtExpiresAt) {
+    return memoryJwt;
+  }
+
+  // Check sessionStorage fallback
+  try {
+    const stored = window.sessionStorage.getItem("equiploop_jwt_token");
+    const storedExp = window.sessionStorage.getItem("equiploop_jwt_exp");
+    if (stored && storedExp && Date.now() < Number(storedExp)) {
+      memoryJwt = stored;
+      memoryJwtExpiresAt = Number(storedExp);
+      return stored;
+    }
+  } catch {
+    // Ignore sessionStorage errors
   }
 
   try {
-    // If authClient has getJwtToken or jwt plugin method
-    // In Better Auth client with jwtClient plugin, authClient.getJwtToken() or token from cookie/session
-    // @ts-ignore
-    const token = await authClient.getJwtToken?.();
-    if (token) {
-      return { Authorization: `Bearer ${token}` };
+    const res = await fetch("/api/auth/token", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.token) {
+        memoryJwt = data.token;
+        memoryJwtExpiresAt = Date.now() + 5 * 60 * 1000; // 5 min TTL
+        try {
+          window.sessionStorage.setItem("equiploop_jwt_token", data.token);
+          window.sessionStorage.setItem("equiploop_jwt_exp", String(memoryJwtExpiresAt));
+        } catch {
+          // ignore
+        }
+        return data.token;
+      }
     }
   } catch (err) {
-    console.warn("Could not retrieve JWT token via getJwtToken:", err);
+    console.warn("[EquipLoop] Failed to fetch JWT token from auth endpoint:", err);
   }
 
+  return null;
+}
+
+export function clearCachedJwtToken(): void {
+  memoryJwt = null;
+  memoryJwtExpiresAt = 0;
+  if (typeof window !== "undefined") {
+    try {
+      window.sessionStorage.removeItem("equiploop_jwt_token");
+      window.sessionStorage.removeItem("equiploop_jwt_exp");
+    } catch {
+      // ignore
+    }
+  }
+}
+
+export async function getAuthHeader(): Promise<Record<string, string>> {
+  const token = await getJwtToken();
+  if (token) {
+    return { Authorization: `Bearer ${token}` };
+  }
   return {};
 }
 
@@ -26,7 +86,8 @@ export async function fetchApi<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  const path = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = `${API_BASE_URL}${path}`;
   const authHeader = await getAuthHeader();
 
   const headers: Record<string, string> = {

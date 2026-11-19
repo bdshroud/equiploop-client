@@ -28,14 +28,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { clearCachedJwtToken } from "@/lib/api";
 
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [sheetOpen, setSheetOpen] = React.useState(false);
 
   // User role inference
   // @ts-ignore
@@ -43,6 +51,7 @@ export function Navbar() {
   const user = session?.user;
 
   const handleSignOut = async () => {
+    clearCachedJwtToken();
     await signOut();
     router.push("/");
     router.refresh();
@@ -100,83 +109,82 @@ export function Navbar() {
           </nav>
         </div>
 
-        {/* Right Section Actions */}
-        <div className="flex items-center gap-2.5">
-          {/* List Equipment Action for Owners or general visitors */}
-          <Link
-            href={userRole === "Owner" ? "/dashboard/owner/equipment/new" : "/equipment"}
-            className="hidden sm:inline-flex"
-          >
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5 border-amber/40 hover:border-amber hover:bg-amber/10 text-xs font-semibold"
-            >
-              <PlusCircle className="h-3.5 w-3.5 text-amber" />
-              <span>{userRole === "Owner" ? "List Equipment" : "Rent Equipment"}</span>
-            </Button>
-          </Link>
-
-          {/* Theme Toggle */}
+        {/* Right Action Icons & Controls */}
+        <div className="flex items-center gap-3">
+          {/* Light / Dark Mode Toggle */}
           <ThemeToggle />
 
-          {/* User Account / Auth buttons */}
+          {/* User Auth Controls */}
           {isPending ? (
-            <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
-          ) : session?.user ? (
+            <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />
+          ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="flex items-center gap-2 rounded-full p-0.5 focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2 transition-transform hover:opacity-90"
+                <Button
+                  variant="ghost"
+                  className="relative flex items-center gap-2.5 rounded-full p-1 pl-2 hover:bg-muted focus-visible:ring-1 focus-visible:ring-amber"
                 >
                   <Avatar className="h-8 w-8 border border-border">
-                    <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
-                    <AvatarFallback className="bg-graphite text-white text-xs font-bold">
-                      {user?.name ? user.name.slice(0, 2).toUpperCase() : "EL"}
+                    <AvatarImage src={user.image || ""} alt={user.name || "User"} />
+                    <AvatarFallback className="bg-graphite text-amber font-bold text-xs">
+                      {user.name ? user.name.slice(0, 2).toUpperCase() : "EL"}
                     </AvatarFallback>
                   </Avatar>
-                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground hidden sm:block" />
-                </button>
+                  <div className="hidden lg:flex flex-col text-left">
+                    <span className="text-xs font-semibold leading-none text-foreground truncate max-w-[120px]">
+                      {user.name}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground font-medium capitalize mt-0.5">
+                      {userRole}
+                    </span>
+                  </div>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground hidden lg:inline-block" />
+                </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 mt-1.5">
-                <DropdownMenuLabel className="font-normal">
+              <DropdownMenuContent align="end" className="w-56 p-2 space-y-1">
+                <DropdownMenuLabel className="font-normal px-2 py-1.5">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-semibold leading-none">{user?.name}</p>
-                    <p className="text-xs leading-none text-muted-foreground truncate">
-                      {user?.email}
-                    </p>
+                    <p className="text-xs font-bold leading-none text-foreground">{user.name}</p>
+                    <p className="text-[11px] leading-none text-muted-foreground truncate">{user.email}</p>
                     <div className="pt-1">
-                      <Badge variant="amber" className="text-[10px] px-1.5 py-0 h-4">
-                        {userRole}
+                      <Badge variant="amber" className="text-[10px] px-1.5 py-0">
+                        {userRole} Portal
                       </Badge>
                     </div>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
-                {/* Role Specific Quick Links */}
+                {/* Role Specific Shortcuts */}
                 {userRole === "Admin" && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/admin" className="flex items-center gap-2 cursor-pointer font-medium text-amber">
-                      <ShieldCheck className="h-4 w-4" />
-                      <span>Admin Console</span>
-                    </Link>
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/admin" className="flex items-center gap-2 cursor-pointer font-medium text-amber">
+                        <ShieldCheck className="h-4 w-4" />
+                        <span>Admin Console</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/admin/equipment" className="flex items-center gap-2 cursor-pointer">
+                        <Layers className="h-4 w-4" />
+                        <span>Equipment Queue</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
                 )}
 
                 {userRole === "Owner" && (
                   <>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/owner" className="flex items-center gap-2 cursor-pointer">
+                      <Link href="/dashboard/owner" className="flex items-center gap-2 cursor-pointer font-medium text-amber">
                         <LayoutDashboard className="h-4 w-4" />
-                        <span>Owner Dashboard</span>
+                        <span>Fleet Overview</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/owner/equipment" className="flex items-center gap-2 cursor-pointer">
-                        <Layers className="h-4 w-4" />
-                        <span>My Equipment Fleet</span>
+                      <Link href="/dashboard/owner/equipment/new" className="flex items-center gap-2 cursor-pointer">
+                        <PlusCircle className="h-4 w-4" />
+                        <span>List Machinery</span>
                       </Link>
                     </DropdownMenuItem>
                   </>
@@ -229,46 +237,117 @@ export function Navbar() {
             </div>
           )}
 
-          {/* Mobile Menu Hamburger */}
-          <button
-            type="button"
-            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus:outline-none"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          {/* Mobile Navigation Sheet Drawer */}
+          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus:outline-none"
+                aria-label="Open navigation menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[360px] p-6 flex flex-col justify-between">
+              <div>
+                <SheetHeader className="text-left pb-4 border-b border-border">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-graphite dark:bg-amber text-amber dark:text-graphite">
+                      <Wrench className="h-4 w-4" />
+                    </div>
+                    <SheetTitle className="text-lg font-black tracking-tight">
+                      Equip<span className="text-amber">Loop</span>
+                    </SheetTitle>
+                  </div>
+                </SheetHeader>
+
+                <nav className="mt-6 flex flex-col space-y-2">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setSheetOpen(false)}
+                      className={`block px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+                        pathname === link.href
+                          ? "bg-amber/15 text-amber"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+
+                  {user && (
+                    <div className="pt-4 mt-2 border-t border-border space-y-2">
+                      <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        User Portal ({userRole})
+                      </div>
+                      <Link
+                        href={getDashboardHome()}
+                        onClick={() => setSheetOpen(false)}
+                        className="block px-3 py-2.5 rounded-lg text-sm font-semibold text-amber hover:bg-amber/10"
+                      >
+                        Dashboard Overview
+                      </Link>
+                      <Link
+                        href="/dashboard/rentals"
+                        onClick={() => setSheetOpen(false)}
+                        className="block px-3 py-2 rounded-lg text-xs font-medium text-foreground hover:bg-muted"
+                      >
+                        My Bookings
+                      </Link>
+                      <Link
+                        href="/dashboard/wishlist"
+                        onClick={() => setSheetOpen(false)}
+                        className="block px-3 py-2 rounded-lg text-xs font-medium text-foreground hover:bg-muted"
+                      >
+                        Saved Wishlist
+                      </Link>
+                      <Link
+                        href="/dashboard/profile"
+                        onClick={() => setSheetOpen(false)}
+                        className="block px-3 py-2 rounded-lg text-xs font-medium text-foreground hover:bg-muted"
+                      >
+                        Account Profile
+                      </Link>
+                    </div>
+                  )}
+                </nav>
+              </div>
+
+              {/* Bottom Actions in Mobile Sheet */}
+              <div className="pt-6 border-t border-border">
+                {user ? (
+                  <Button
+                    variant="outline"
+                    className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"
+                    onClick={() => {
+                      setSheetOpen(false);
+                      handleSignOut();
+                    }}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </Button>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <Link href="/login" onClick={() => setSheetOpen(false)}>
+                      <Button variant="outline" className="w-full">
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link href="/register" onClick={() => setSheetOpen(false)}>
+                      <Button className="w-full bg-primary text-primary-foreground">
+                        Register
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-b border-border bg-card px-4 pt-2 pb-4 space-y-2 animate-in slide-in-from-top-2">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className={`block px-3 py-2 rounded-md text-base font-medium ${
-                pathname === link.href
-                  ? "bg-amber/15 text-amber font-semibold"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
-          {session?.user && (
-            <Link
-              href={getDashboardHome()}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-md text-base font-semibold text-amber hover:bg-amber/15"
-            >
-              Go to Dashboard ({userRole})
-            </Link>
-          )}
-        </div>
-      )}
     </header>
   );
 }
