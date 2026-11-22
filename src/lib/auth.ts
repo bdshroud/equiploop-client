@@ -3,34 +3,89 @@ import { MongoClient, Db } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { jwt } from "better-auth/plugins";
 
-const uri =
-  process.env.DB_URI ||
-  "mongodb://pubglover2632_db_user:Qst9Ubgt6H4hpYkK@ac-xoc2uh3-shard-00-00.zttr4sb.mongodb.net:27017,ac-xoc2uh3-shard-00-01.zttr4sb.mongodb.net:27017,ac-xoc2uh3-shard-00-02.zttr4sb.mongodb.net:27017/?ssl=true&replicaSet=atlas-sxbdxw-shard-0&authSource=admin";
 const dbName = process.env.DB_NAME || "equiploop";
 
-// Global MongoClient caching across hot-reloads and Vercel serverless lambdas
-const globalForMongo = globalThis as unknown as {
-  _mongoClient?: MongoClient;
-  _mongoDb?: Db;
-};
+// Global MongoClient caching with auto-reconnection for serverless lifecycle
+let cachedClient: MongoClient | null = null;
 
-if (!globalForMongo._mongoClient) {
-  globalForMongo._mongoClient = new MongoClient(uri, {
-    maxPoolSize: 10,
-    serverSelectionTimeoutMS: 5000,
-    connectTimeoutMS: 10000,
-  });
+function isClientDead(client: MongoClient | null): boolean {
+  if (!client) return true;
+  const anyClient = client as any;
+  if (anyClient.s?.hasBeenClosed) return true;
+  if (anyClient.topology == null && anyClient.s?.hasBeenClosed) return true;
+  if (anyClient.topology?.isDestroyed?.()) return true;
+  if (anyClient.topology?.s?.state === "closed") return true;
+  return false;
 }
 
-const client = globalForMongo._mongoClient;
-const db = client.db(dbName);
+export function getMongoClient(): MongoClient {
+  const uri = process.env.DB_URI || "";
+  if (!uri) {
+    throw new Error("Missing DB_URI environment variable");
+  }
+
+  const globalAny = globalThis as any;
+  if (!cachedClient) {
+    cachedClient = globalAny._mongoClient || null;
+  }
+
+  if (isClientDead(cachedClient)) {
+    try {
+      cachedClient?.close().catch(() => {});
+    } catch {}
+    cachedClient = new MongoClient(uri, {
+      maxPoolSize: 10,
+    });
+    globalAny._mongoClient = cachedClient;
+  }
+
+  return cachedClient!;
+}
+
+function getActiveDb(): Db {
+  return getMongoClient().db(dbName);
+}
+
+// Proxies ensuring database and collection operations always route to an active client
+const dbProxy = new Proxy({} as Db, {
+  get(_target, prop: string | symbol) {
+    if (prop === "collection") {
+      return (name: string, options?: any) => {
+        return new Proxy({} as any, {
+          get(_colTarget, colProp: string | symbol) {
+            const activeCol = getActiveDb().collection(name, options);
+            const val = (activeCol as any)[colProp];
+            return typeof val === "function" ? val.bind(activeCol) : val;
+          },
+        });
+      };
+    }
+    const activeDb = getActiveDb();
+    const val = (activeDb as any)[prop];
+    return typeof val === "function" ? val.bind(activeDb) : val;
+  },
+});
+
+const clientProxy = new Proxy({} as MongoClient, {
+  get(_target, prop: string | symbol) {
+    const activeClient = getMongoClient();
+    const val = (activeClient as any)[prop];
+    return typeof val === "function" ? val.bind(activeClient) : val;
+  },
+});
 
 const getBaseURL = () => {
-  if (process.env.NODE_ENV === "development") {
-    return "http://localhost:3000";
-  }
   if (process.env.BETTER_AUTH_URL) {
     return process.env.BETTER_AUTH_URL;
+  }
+  if (process.env.NEXT_PUBLIC_BETTER_AUTH_URL) {
+    return process.env.NEXT_PUBLIC_BETTER_AUTH_URL;
+  }
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000";
   }
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
@@ -53,7 +108,7 @@ export const auth = betterAuth({
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
     process.env.NEXT_PUBLIC_API_URL,
   ].filter(Boolean) as string[],
-  database: mongodbAdapter(db, { client }),
+  database: mongodbAdapter(dbProxy, { client: clientProxy }),
   account: {
     accountLinking: {
       enabled: true,
@@ -104,7 +159,7 @@ export const auth = betterAuth({
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role ?? "Customer",
+          role: (user as any).role ?? "Customer",
         }),
       },
     }),
