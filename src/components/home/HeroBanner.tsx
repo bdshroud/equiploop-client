@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Search, MapPin, ShieldCheck, ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
+import { Search, ArrowRight, Sparkles, CheckCircle2, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function HeroBanner() {
@@ -73,14 +73,14 @@ export function HeroBanner() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-8 p-2 sm:p-2.5 rounded-2xl bg-white/10 dark:bg-card/70 backdrop-blur-md border border-white/20 shadow-2xl flex flex-col sm:flex-row items-center gap-2 text-left"
+            className="mt-8 p-2 sm:p-2.5 rounded-2xl bg-white/[0.08] backdrop-blur-md border border-white/20 shadow-2xl flex flex-col sm:flex-row items-center gap-2 text-left"
           >
             {/* Search Input */}
             <div className="relative flex-1 w-full">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search machinery, brand, or tool (e.g. Caterpillar, Scissor Lift)..."
+                placeholder="Search machinery, brand, or model (e.g. Caterpillar)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 bg-transparent text-sm text-white placeholder:text-slate-400 focus:outline-none"
@@ -88,21 +88,23 @@ export function HeroBanner() {
             </div>
 
             {/* Category Dropdown */}
-            <div className="w-full sm:w-48 border-t sm:border-t-0 sm:border-l border-white/15 px-2">
+            <div className="relative w-full sm:w-52 border-t sm:border-t-0 sm:border-l border-white/15 px-2 flex items-center">
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full py-3 bg-transparent text-sm text-white dark:bg-card focus:outline-none cursor-pointer"
+                className="w-full py-3 pl-2 pr-8 bg-transparent text-sm text-white focus:outline-none cursor-pointer appearance-none"
+                style={{ backgroundColor: "transparent" }}
               >
-                <option value="All" className="bg-graphite text-white">All Categories</option>
-                <option value="Heavy Machinery" className="bg-graphite text-white">Heavy Machinery</option>
-                <option value="Construction" className="bg-graphite text-white">Construction</option>
-                <option value="Power Tools" className="bg-graphite text-white">Power Tools</option>
-                <option value="Material Handling" className="bg-graphite text-white">Material Handling</option>
-                <option value="Landscaping & Gardening" className="bg-graphite text-white">Landscaping</option>
-                <option value="Generators & Power" className="bg-graphite text-white">Generators & Power</option>
-                <option value="Audio/Visual & Event Tech" className="bg-graphite text-white">Audio/Visual</option>
+                <option value="All" className="bg-[#1e2430] text-white">All Categories</option>
+                <option value="Heavy Machinery" className="bg-[#1e2430] text-white">Heavy Machinery</option>
+                <option value="Construction" className="bg-[#1e2430] text-white">Construction</option>
+                <option value="Power Tools" className="bg-[#1e2430] text-white">Power Tools</option>
+                <option value="Material Handling" className="bg-[#1e2430] text-white">Material Handling</option>
+                <option value="Landscaping & Gardening" className="bg-[#1e2430] text-white">Landscaping</option>
+                <option value="Generators & Power" className="bg-[#1e2430] text-white">Generators & Power</option>
+                <option value="Audio/Visual & Event Tech" className="bg-[#1e2430] text-white">Audio/Visual</option>
               </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300 pointer-events-none" />
             </div>
 
             {/* Search Button */}
