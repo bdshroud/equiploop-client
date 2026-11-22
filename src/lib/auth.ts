@@ -3,7 +3,9 @@ import { MongoClient, Db } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { jwt } from "better-auth/plugins";
 
-const uri = process.env.DB_URI || "mongodb://localhost:27017";
+const uri =
+  process.env.DB_URI ||
+  "mongodb://pubglover2632_db_user:Qst9Ubgt6H4hpYkK@ac-xoc2uh3-shard-00-00.zttr4sb.mongodb.net:27017,ac-xoc2uh3-shard-00-01.zttr4sb.mongodb.net:27017,ac-xoc2uh3-shard-00-02.zttr4sb.mongodb.net:27017/?ssl=true&replicaSet=atlas-sxbdxw-shard-0&authSource=admin";
 const dbName = process.env.DB_NAME || "equiploop";
 
 // Global MongoClient caching across hot-reloads and Vercel serverless lambdas
@@ -40,7 +42,7 @@ const baseURL = getBaseURL();
 
 export const auth = betterAuth({
   baseURL,
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: process.env.BETTER_AUTH_SECRET || "g7XTA7cm2cboK3nbXpeN85Wg48ZVKeuI",
   trustedOrigins: [
     "http://localhost:3000",
     "https://equiploop-client.vercel.app",
