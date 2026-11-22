@@ -4,8 +4,8 @@ Frontend application for **EquipLoop** (Programming Hero Assignment 9 — Catego
 
 - **Project Name:** EquipLoop
 - **Tagline:** Rent smarter. Work better.
-- **Live Client URL:** `https://equiploop.vercel.app` (Placeholder / Deployment Target)
-- **Live Server API:** `https://api.equiploop.com/api` (Placeholder / Deployment Target)
+- **Live Client URL:** https://equiploop-client.vercel.app
+- **Live Server API:** https://equiploop-server.vercel.app
 
 ---
 
