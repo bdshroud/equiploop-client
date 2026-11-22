@@ -16,7 +16,6 @@ export default function DashboardIndexPage() {
       return;
     }
 
-    // @ts-ignore
     const role = session.user.role || "Customer";
 
     if (role === "Admin") {

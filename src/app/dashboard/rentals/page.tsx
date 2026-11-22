@@ -213,6 +213,10 @@ function CustomerRentalsContent() {
                           src={b.equipmentImage || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"}
                           alt={b.equipmentTitle}
                           className="h-9 w-12 rounded object-cover border border-border shrink-0"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80";
+                          }}
                         />
                         <span className="line-clamp-1 max-w-[200px]">{b.equipmentTitle}</span>
                       </Link>

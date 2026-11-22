@@ -46,7 +46,6 @@ export function Navbar() {
   const [sheetOpen, setSheetOpen] = React.useState(false);
 
   // User role inference
-  // @ts-ignore
   const userRole = session?.user?.role || "Customer";
   const user = session?.user;
 

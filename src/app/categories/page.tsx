@@ -53,7 +53,7 @@ const CATEGORIES = [
     desc: "Tracked stump grinders, commercial wood chippers, turf aerators, and heavy trenchers.",
     icon: Trees,
     units: "29+ Units",
-    image: "https://images.unsplash.com/photo-1558904541-efa8c4a08931?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1557429287-b2e26467fc2b?auto=format&fit=crop&w=800&q=80",
   },
   {
     name: "Generators & Power",
@@ -111,6 +111,11 @@ export default function CategoriesPage() {
                     src={c.image}
                     alt={c.name}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80";
+                    }}
                   />
                   <div className="absolute top-2.5 left-2.5 h-8 w-8 rounded-lg bg-graphite/80 backdrop-blur-xs text-amber flex items-center justify-center">
                     <Icon className="h-4 w-4" />

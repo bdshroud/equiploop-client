@@ -401,6 +401,10 @@ function EquipmentDetailContent() {
                   src={images[activeImageIndex]}
                   alt={displayTitle}
                   className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80";
+                  }}
                 />
               </div>
 
@@ -415,7 +419,15 @@ function EquipmentDetailContent() {
                         activeImageIndex === i ? "border-amber ring-2 ring-amber/30" : "border-border opacity-70 hover:opacity-100"
                       }`}
                     >
-                      <img src={img} alt="Thumbnail" className="h-full w-full object-cover" />
+                      <img
+                        src={img}
+                        alt="Thumbnail"
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80";
+                        }}
+                      />
                     </button>
                   ))}
                 </div>

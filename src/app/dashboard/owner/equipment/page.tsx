@@ -42,6 +42,28 @@ export default function OwnerEquipmentListPage() {
   const [editCategory, setEditCategory] = React.useState("");
   const [updating, setUpdating] = React.useState(false);
 
+  const loadOwnerEquipment = React.useCallback(async () => {
+    if (!session?.user?.id) return;
+    try {
+      const res = await fetchApi<{
+        success: boolean;
+        data: EquipmentItem[];
+      }>(`/equipment?ownerId=${session.user.id}`);
+
+      if (res.data) {
+        setItems(res.data);
+      }
+    } catch (err: any) {
+      console.warn("Failed to load owner fleet:", err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [session?.user?.id]);
+
+  React.useEffect(() => {
+    loadOwnerEquipment();
+  }, [loadOwnerEquipment]);
+
   const openUpdateModal = (item: EquipmentItem) => {
     setEditingItem(item);
     setEditTitle(item.title || item.equipmentName || "");
@@ -76,28 +98,6 @@ export default function OwnerEquipmentListPage() {
       setUpdating(false);
     }
   };
-
-  const loadOwnerEquipment = React.useCallback(async () => {
-    if (!session?.user?.id) return;
-    try {
-      const res = await fetchApi<{
-        success: boolean;
-        data: EquipmentItem[];
-      }>(`/equipment?ownerId=${session.user.id}`);
-
-      if (res.data) {
-        setItems(res.data);
-      }
-    } catch (err: any) {
-      console.warn("Failed to load owner fleet:", err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [session?.user?.id]);
-
-  React.useEffect(() => {
-    loadOwnerEquipment();
-  }, [loadOwnerEquipment]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to permanently delete this equipment listing?")) return;
@@ -198,6 +198,10 @@ export default function OwnerEquipmentListPage() {
                           src={item.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"}
                           alt={item.title}
                           className="h-9 w-12 rounded object-cover border border-border shrink-0"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80";
+                          }}
                         />
                         <span className="line-clamp-1 max-w-[220px]">
                           {item.equipmentName || item.title}

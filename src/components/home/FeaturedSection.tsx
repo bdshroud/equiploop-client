@@ -115,7 +115,7 @@ const FALLBACK_FEATURED: EquipmentItem[] = [
     category: "Electronics",
     rentalType: "Daily",
     description: "Non-contact thermal camera with 640x480 IR resolution, 1-Touch Level/Span, laser autofocus, and temp range to 1500°C.",
-    images: ["https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80"],
+    images: ["https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80"],
     pricePerDay: 165,
     rentalPrice: 165,
     securityDeposit: 300,

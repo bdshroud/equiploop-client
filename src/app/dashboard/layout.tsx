@@ -43,7 +43,6 @@ export default function DashboardLayout({
   const { data: session, isPending } = useSession();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  // @ts-ignore
   const role = session?.user?.role || "Customer";
 
   const handleSignOut = async () => {

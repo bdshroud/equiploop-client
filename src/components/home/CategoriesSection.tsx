@@ -21,7 +21,7 @@ const CATEGORIES = [
     desc: "Hydraulic excavators, compactors, concrete mixers & lifts",
     icon: HardHat,
     count: "48+ Units",
-    image: "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80",
   },
   {
     name: "Photography Equipment",
@@ -53,7 +53,7 @@ const CATEGORIES = [
     desc: "Thermal imaging cameras, spectrum analyzers & testers",
     icon: Cpu,
     count: "30+ Units",
-    image: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80",
   },
   {
     name: "Event Equipment",
@@ -113,6 +113,10 @@ export function CategoriesSection() {
                     alt={cat.name}
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80";
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-graphite/95 via-graphite/60 to-transparent transition-opacity group-hover:opacity-90" />
 

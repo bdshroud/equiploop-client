@@ -100,6 +100,10 @@ export default function FavoritesPage() {
                         src={item.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"}
                         alt={item.title}
                         className="h-10 w-14 rounded-lg object-cover border border-border"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80";
+                        }}
                       />
                     </td>
                     <td className="py-3 px-4 font-bold text-foreground">

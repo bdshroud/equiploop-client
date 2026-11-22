@@ -75,9 +75,7 @@ export default function RegisterPage() {
         email: email.trim(),
         password,
         image: image.trim() || undefined,
-        // @ts-ignore
         phone: phone.trim(),
-        // @ts-ignore
         address: address.trim(),
       });
 

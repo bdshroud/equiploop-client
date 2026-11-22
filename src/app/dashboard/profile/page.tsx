@@ -15,7 +15,6 @@ import { toast } from "sonner";
 export default function ProfilePage() {
   const { data: session } = useSession();
 
-  // @ts-ignore
   const role = session?.user?.role || "Customer";
 
   const [name, setName] = React.useState("");
@@ -66,9 +65,7 @@ export default function ProfilePage() {
       } catch (err) {
         if (session?.user) {
           setName(session.user.name || "");
-          // @ts-ignore
           setPhone(session.user.phone || "");
-          // @ts-ignore
           setAddress(session.user.address || "");
           setImage(session.user.image || "");
         }
