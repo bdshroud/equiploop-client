@@ -26,7 +26,34 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col antialiased bg-background text-foreground transition-colors selection:bg-amber/30 selection:text-amber-900 dark:selection:text-amber-200">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var origSetAttribute = Element.prototype.setAttribute;
+                  Element.prototype.setAttribute = function(name, value) {
+                    if (name === 'bis_skin_checked' || name === 'bis_register' || (typeof name === 'string' && name.indexOf('__processed_') === 0)) {
+                      return;
+                    }
+                    return origSetAttribute.apply(this, arguments);
+                  };
+                  if (document.querySelectorAll) {
+                    document.querySelectorAll('[bis_skin_checked]').forEach(function(el) {
+                      el.removeAttribute('bis_skin_checked');
+                    });
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body
+        suppressHydrationWarning
+        className="min-h-screen flex flex-col antialiased bg-background text-foreground transition-colors selection:bg-amber/30 selection:text-amber-900 dark:selection:text-amber-200"
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
