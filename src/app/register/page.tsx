@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Wrench, Mail, Lock, User, Phone, MapPin } from "lucide-react";
+import { Wrench, Mail, Lock, User, Phone, MapPin, Camera } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ export default function RegisterPage() {
 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [image, setImage] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [address, setAddress] = React.useState("");
@@ -48,7 +49,7 @@ export default function RegisterPage() {
         name: name.trim(),
         email: email.trim(),
         password,
-        image: undefined,
+        image: image.trim() || undefined,
         phone: phone.trim(),
         address: address.trim(),
       });
@@ -187,7 +188,30 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Password */}
+            {/* Photo URL */}
+            <div>
+              <label className="text-xs font-semibold text-foreground block mb-1">
+                Photo URL <span className="text-muted-foreground font-normal">(optional)</span>
+              </label>
+              <div className="relative">
+                <Camera className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="url"
+                  placeholder="https://images.unsplash.com/... or ImgBB URL"
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                  className="pl-9 text-xs"
+                />
+              </div>
+              {image && (
+                <div className="mt-1.5 flex items-center gap-2">
+                  <img src={image} alt="Preview" className="h-7 w-7 rounded-full object-cover border border-border" />
+                  <span className="text-[10px] text-muted-foreground truncate">Photo preview ready</span>
+                </div>
+              )}
+            </div>
+
+
             <div>
               <label className="text-xs font-semibold text-foreground block mb-1">
                 Password *
