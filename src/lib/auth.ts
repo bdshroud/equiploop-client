@@ -23,28 +23,48 @@ if (!globalForMongo._mongoClient) {
 const client = globalForMongo._mongoClient;
 const db = client.db(dbName);
 
-const baseURL =
-  process.env.BETTER_AUTH_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+const getBaseURL = () => {
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000";
+  }
+  if (process.env.BETTER_AUTH_URL) {
+    return process.env.BETTER_AUTH_URL;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return "https://equiploop-client.vercel.app";
+};
+
+const baseURL = getBaseURL();
 
 export const auth = betterAuth({
   baseURL,
   secret: process.env.BETTER_AUTH_SECRET,
   trustedOrigins: [
+    "http://localhost:3000",
+    "https://equiploop-client.vercel.app",
     baseURL,
     process.env.BETTER_AUTH_URL,
     process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+    process.env.NEXT_PUBLIC_APP_URL,
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
     process.env.NEXT_PUBLIC_API_URL,
-    "http://localhost:3000",
   ].filter(Boolean) as string[],
   database: mongodbAdapter(db, { client }),
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["google"],
+    },
+  },
   user: {
     additionalFields: {
       role: {
-        type: ["Customer", "Owner", "Admin"],
-        input: false, // Prevents users from passing role during signup
+        type: "string",
+        required: false,
         defaultValue: "Customer",
+        input: false, // Prevents users from passing role during signup
       },
       phone: {
         type: "string",
@@ -69,6 +89,8 @@ export const auth = betterAuth({
           google: {
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            accessType: "offline",
+            prompt: "select_account",
           },
         }
       : {}),

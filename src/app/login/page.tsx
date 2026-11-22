@@ -52,12 +52,26 @@ function LoginContent() {
   const handleGoogleSignIn = async () => {
     try {
       setSocialLoading(true);
-      await signIn.social({
+      const callbackURL =
+        typeof window !== "undefined"
+          ? `${window.location.origin}${redirectUrl.startsWith("/") ? redirectUrl : `/${redirectUrl}`}`
+          : redirectUrl;
+
+      const res = await signIn.social({
         provider: "google",
-        callbackURL: redirectUrl,
+        callbackURL,
       });
+
+      if (res?.error) {
+        toast.error(res.error.message || "Google sign in failed");
+        return;
+      }
+
+      if (res?.data?.url) {
+        window.location.href = res.data.url;
+      }
     } catch (err: any) {
-      toast.error("Google sign in could not be initiated");
+      toast.error(err?.message || "Google sign in could not be initiated");
     } finally {
       setSocialLoading(false);
     }
