@@ -6,7 +6,8 @@ import { Bookmark, Search } from "lucide-react";
 import { EquipmentCard, EquipmentItem } from "@/components/equipment/EquipmentCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function WishlistPage() {
   const [items, setItems] = React.useState<EquipmentItem[]>([]);
@@ -18,8 +19,9 @@ export default function WishlistPage() {
       if (res.data) {
         setItems(res.data);
       }
-    } catch (err: any) {
-      console.warn("Failed to load wishlist:", err.message);
+    } catch (err) {
+      console.warn("Failed to load wishlist:", apiErrorMessage(err));
+      toast.error(apiErrorMessage(err, "Failed to load wishlist"));
     } finally {
       setLoading(false);
     }

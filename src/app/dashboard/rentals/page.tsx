@@ -17,7 +17,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
+import { EquipmentImage } from "@/components/equipment/EquipmentImage";
 import { toast } from "sonner";
 
 interface Booking {
@@ -67,8 +68,9 @@ function CustomerRentalsContent() {
         setTotalPages(res.pagination.totalPages || 1);
         setTotalCount(res.pagination.total || 0);
       }
-    } catch (err: any) {
-      console.warn("Could not load bookings:", err.message);
+    } catch (err) {
+      console.warn("Could not load bookings:", apiErrorMessage(err));
+      toast.error(apiErrorMessage(err, "Could not load your rentals"));
     } finally {
       setLoading(false);
     }
@@ -112,8 +114,8 @@ function CustomerRentalsContent() {
       } else {
         toast.error("Could not generate checkout session");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Payment initiation failed");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Payment initiation failed"));
     } finally {
       setPayingId(null);
     }
@@ -129,8 +131,8 @@ function CustomerRentalsContent() {
       });
       toast.success("Booking request cancelled");
       loadBookings();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to cancel booking");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to cancel booking"));
     }
   };
 
@@ -209,15 +211,7 @@ function CustomerRentalsContent() {
                     {/* Equipment Name */}
                     <td className="py-3.5 px-4 font-bold text-foreground">
                       <Link href={`/equipment/${b.equipmentId}`} className="hover:text-amber transition-colors flex items-center gap-2">
-                        <img
-                          src={b.equipmentImage || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"}
-                          alt={b.equipmentTitle}
-                          className="h-9 w-12 rounded object-cover border border-border shrink-0"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80";
-                          }}
-                        />
+                        <EquipmentImage src={b.equipmentImage || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"} alt={b.equipmentTitle} width={48} height={36} className="h-9 w-12 rounded object-cover border border-border shrink-0" />
                         <span className="line-clamp-1 max-w-[200px]">{b.equipmentTitle}</span>
                       </Link>
                     </td>

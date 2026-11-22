@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate } from "@/lib/utils";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
 import { toast } from "sonner";
 
 interface PlatformUser {
@@ -49,8 +49,8 @@ export default function AdminUsersPage() {
       if (res.data) {
         setUsers(res.data);
       }
-    } catch (err: any) {
-      console.warn("Failed to load users:", err.message);
+    } catch (err) {
+      console.warn("Failed to load users:", apiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -68,8 +68,8 @@ export default function AdminUsersPage() {
       });
       toast.success(`User role changed to ${newRole}`);
       loadUsers();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update role");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update role"));
     }
   };
 
@@ -81,8 +81,8 @@ export default function AdminUsersPage() {
       });
       toast.success(`User status changed to ${status}`);
       loadUsers();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update status");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update status"));
     }
   };
 
@@ -198,7 +198,7 @@ export default function AdminUsersPage() {
                         {/* Change Role */}
                         <select
                           value={u.role}
-                          onChange={(e) => handleRoleChange(uid, e.target.value as any)}
+                          onChange={(e) => handleRoleChange(uid, e.target.value as PlatformUser["role"])}
                           className="h-8 px-2 rounded-md border border-input bg-background text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-amber"
                           title="Change Role"
                         >

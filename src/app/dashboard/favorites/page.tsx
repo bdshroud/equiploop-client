@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/utils";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
 import { toast } from "sonner";
 import { EquipmentItem } from "@/components/equipment/EquipmentCard";
+import { EquipmentImage } from "@/components/equipment/EquipmentImage";
 
 export default function FavoritesPage() {
   const [items, setItems] = React.useState<EquipmentItem[]>([]);
@@ -22,8 +23,9 @@ export default function FavoritesPage() {
       if (res.data) {
         setItems(res.data);
       }
-    } catch (err: any) {
-      console.warn("Failed to load favorites:", err.message);
+    } catch (err) {
+      console.warn("Failed to load favorites:", apiErrorMessage(err));
+      toast.error(apiErrorMessage(err, "Failed to load favorites"));
     } finally {
       setLoading(false);
     }
@@ -38,8 +40,8 @@ export default function FavoritesPage() {
       await fetchApi(`/users/favorites/${id}`, { method: "POST" });
       setItems((prev) => prev.filter((i) => i._id !== id));
       toast.info("Removed from your favorites list");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to remove favorite");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to remove favorite"));
     }
   };
 
@@ -96,15 +98,7 @@ export default function FavoritesPage() {
                 {items.map((item) => (
                   <tr key={item._id} className="hover:bg-muted/30 transition-colors">
                     <td className="py-3 px-4">
-                      <img
-                        src={item.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"}
-                        alt={item.title}
-                        className="h-10 w-14 rounded-lg object-cover border border-border"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80";
-                        }}
-                      />
+                      <EquipmentImage src={item.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"} alt={item.title} width={56} height={40} className="h-10 w-14 rounded-lg object-cover border border-border" />
                     </td>
                     <td className="py-3 px-4 font-bold text-foreground">
                       <Link href={`/equipment/${item._id}`} className="hover:text-amber transition-colors">

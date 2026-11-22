@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatCurrency } from "@/lib/utils";
 import { useSession } from "@/lib/auth-client";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
 import { toast } from "sonner";
 import { EquipmentItem } from "@/components/equipment/EquipmentCard";
 
@@ -53,8 +53,8 @@ export default function OwnerEquipmentListPage() {
       if (res.data) {
         setItems(res.data);
       }
-    } catch (err: any) {
-      console.warn("Failed to load owner fleet:", err.message);
+    } catch (err) {
+      console.warn("Failed to load owner fleet:", apiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -92,8 +92,8 @@ export default function OwnerEquipmentListPage() {
       toast.success("Equipment updated successfully");
       setEditingItem(null);
       loadOwnerEquipment();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update equipment");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update equipment"));
     } finally {
       setUpdating(false);
     }
@@ -106,8 +106,8 @@ export default function OwnerEquipmentListPage() {
       await fetchApi(`/equipment/${id}`, { method: "DELETE" });
       setItems((prev) => prev.filter((i) => i._id !== id));
       toast.success("Equipment listing deleted successfully");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to delete equipment");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to delete equipment"));
     }
   };
 

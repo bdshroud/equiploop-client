@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
+  AlertCircle,
   Search,
   SlidersHorizontal,
   LayoutGrid,
@@ -23,7 +24,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
+import { searchFiltersSchema } from "@/lib/schemas";
+import { toast } from "sonner";
+import { EquipmentListResponse } from "@/types";
 
 const CATEGORIES = [
   "All",
@@ -78,6 +82,7 @@ function EquipmentBrowseContent() {
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
   const [totalCount, setTotalCount] = React.useState(0);
+  const [error, setError] = React.useState<string | null>(null);
   const [showFiltersMobile, setShowFiltersMobile] = React.useState(false);
 
   // Sync state if URL query changes
@@ -92,6 +97,7 @@ function EquipmentBrowseContent() {
   // Load items from API with server-side filters & sorting
   const loadEquipment = React.useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams();
       if (search.trim()) params.set("search", search.trim());
@@ -105,19 +111,20 @@ function EquipmentBrowseContent() {
       params.set("page", page.toString());
       params.set("limit", "12");
 
-      const res = await fetchApi<{
-        success: boolean;
-        data: EquipmentItem[];
-        pagination: { total: number; page: number; limit: number; totalPages: number };
-      }>(`/equipment?${params.toString()}`);
+      const res = await fetchApi<EquipmentListResponse>(`/equipment?${params.toString()}`);
 
       if (res.data) {
         setItems(res.data);
-        setTotalCount(res.pagination.total);
-        setTotalPages(res.pagination.totalPages);
+        if (res.pagination) {
+          setTotalCount(res.pagination.total);
+          setTotalPages(res.pagination.totalPages);
+        }
       }
     } catch (err) {
-      console.warn("Error loading equipment catalog:", err);
+      const message = apiErrorMessage(err, "Failed to load the equipment catalog");
+      console.warn("Error loading equipment catalog:", message);
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -130,15 +137,36 @@ function EquipmentBrowseContent() {
   const handleFilterSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     setPage(1);
+
+    const parsed = searchFiltersSchema.safeParse({
+      search: search.trim(),
+      location: locationInput.trim(),
+      category,
+      rentalType,
+      minPrice: minPrice || undefined,
+      maxPrice: maxPrice || undefined,
+      availability,
+      sort,
+    });
+
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? "Please enter valid search filters");
+      return;
+    }
+
     const params = new URLSearchParams();
-    if (search.trim()) params.set("search", search.trim());
-    if (locationInput.trim()) params.set("location", locationInput.trim());
-    if (category && category !== "All") params.set("category", category);
-    if (rentalType && rentalType !== "All") params.set("rentalType", rentalType);
-    if (minPrice) params.set("minPrice", minPrice);
-    if (maxPrice) params.set("maxPrice", maxPrice);
-    if (sort) params.set("sort", sort);
-    if (availability) params.set("availability", availability);
+    if (parsed.data.search?.trim()) params.set("search", parsed.data.search.trim());
+    if (parsed.data.location?.trim()) params.set("location", parsed.data.location.trim());
+    if (parsed.data.category && parsed.data.category !== "All") {
+      params.set("category", parsed.data.category);
+    }
+    if (parsed.data.rentalType && parsed.data.rentalType !== "All") {
+      params.set("rentalType", parsed.data.rentalType);
+    }
+    if (parsed.data.minPrice !== undefined) params.set("minPrice", String(parsed.data.minPrice));
+    if (parsed.data.maxPrice !== undefined) params.set("maxPrice", String(parsed.data.maxPrice));
+    if (parsed.data.sort) params.set("sort", parsed.data.sort);
+    if (parsed.data.availability) params.set("availability", parsed.data.availability);
     router.push(`/equipment?${params.toString()}`);
   };
 
@@ -556,6 +584,18 @@ function EquipmentBrowseContent() {
                     <Skeleton className="h-8 w-full mt-4" />
                   </div>
                 ))}
+              </div>
+            ) : error ? (
+              <div className="p-12 text-center rounded-2xl border border-dashed border-destructive/40 bg-destructive/5">
+                <div className="h-12 w-12 rounded-full bg-destructive/15 text-destructive mx-auto flex items-center justify-center mb-3">
+                  <AlertCircle className="h-6 w-6" />
+                </div>
+                <h3 className="font-bold text-lg text-foreground">Could Not Load Equipment</h3>
+                <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-6">{error}</p>
+                <Button onClick={() => loadEquipment()} size="sm" variant="outline" className="font-semibold text-xs">
+                  <RotateCcw className="h-3.5 w-3.5 mr-1" />
+                  Try Again
+                </Button>
               </div>
             ) : items.length === 0 ? (
               <div className="p-12 text-center rounded-2xl border border-dashed border-border bg-card">

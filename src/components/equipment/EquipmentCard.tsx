@@ -7,38 +7,14 @@ import { Star, MapPin, ShieldCheck, Heart, ArrowUpRight, Lock } from "lucide-rea
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { EquipmentImage } from "@/components/equipment/EquipmentImage";
 import { formatCurrency } from "@/lib/utils";
 import { useSession } from "@/lib/auth-client";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
 import { toast } from "sonner";
+import type { EquipmentItem } from "@/types";
 
-export interface EquipmentItem {
-  _id: string;
-  title: string;
-  equipmentName?: string;
-  category: string;
-  description: string;
-  images: string[];
-  pricePerDay: number;
-  rentalPrice?: number;
-  rentalType?: string;
-  securityDeposit?: number;
-  availableQuantity?: number;
-  condition?: string;
-  brand?: string;
-  model?: string;
-  location?: {
-    city: string;
-    state: string;
-    address?: string;
-  };
-  availability: boolean;
-  status: string;
-  isFeatured?: boolean;
-  rating?: number;
-  totalReviews?: number;
-  ownerName?: string;
-}
+export type { EquipmentItem };
 
 interface EquipmentCardProps {
   item: EquipmentItem;
@@ -94,8 +70,8 @@ export function EquipmentCard({
         toast.info("Removed from your favorites");
       }
       onWishlistToggle?.(item._id, res.isSaved);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update favorites");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update favorites"));
     } finally {
       setLoadingSave(false);
     }
@@ -110,15 +86,13 @@ export function EquipmentCard({
     <Card className="h-full flex flex-col overflow-hidden group hover:shadow-lg transition-all duration-300 border-border hover:border-amber/50 bg-card">
       {/* Uniform Aspect Ratio Image Container */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
-        <img
+        <EquipmentImage
           src={displayImage}
           alt={displayTitle}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80";
-          }}
+          sizes="(max-width: 640px) 100vw, 33vw"
+          priority={item.isFeatured === true}
+          fill
         />
 
         {/* Top Badges Overlay */}

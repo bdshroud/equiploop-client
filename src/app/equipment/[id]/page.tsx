@@ -29,23 +29,17 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/utils";
+import { EquipmentImage } from "@/components/equipment/EquipmentImage";
 import { useSession } from "@/lib/auth-client";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
+import { bookingWidgetSchema, reviewSchema } from "@/lib/schemas";
 import { toast } from "sonner";
-import { EquipmentItem } from "@/components/equipment/EquipmentCard";
+import type { Equipment, EquipmentReview } from "@/types";
 
-interface EquipmentDetail extends EquipmentItem {
-  specifications: Record<string, string>;
-  rentalTerms?: string;
+type EquipmentDetail = Equipment & {
   ownerEmail?: string;
-  reviews?: Array<{
-    _id: string;
-    customerName: string;
-    rating: number;
-    comment: string;
-    createdAt: string;
-  }>;
-}
+  reviews?: EquipmentReview[];
+};
 
 function EquipmentDetailContent() {
   const params = useParams();
@@ -85,7 +79,7 @@ function EquipmentDetailContent() {
         if (res.data) {
           setItem(res.data);
         }
-      } catch (err: any) {
+      } catch (err) {
         toast.error("Equipment not found or failed to load");
       } finally {
         setLoading(false);
@@ -95,7 +89,7 @@ function EquipmentDetailContent() {
     async function checkFavorite() {
       if (!session?.user) return;
       try {
-        const favRes = await fetchApi<{ success: boolean; data: EquipmentItem[] }>("/users/favorites");
+        const favRes = await fetchApi<{ success: boolean; data: Equipment[] }>("/users/favorites");
         if (favRes.data && Array.isArray(favRes.data)) {
           const found = favRes.data.some((f) => f._id === id);
           setIsFavorite(found);
@@ -155,8 +149,8 @@ function EquipmentDetailContent() {
       } else {
         toast.info("Removed from your favorites list");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update favorites");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update favorites"));
     } finally {
       setFavLoading(false);
     }
@@ -177,6 +171,19 @@ function EquipmentDetailContent() {
 
     if (new Date(startDate) > new Date(endDate)) {
       toast.error("Start date cannot be after end date");
+      return;
+    }
+
+    const parsedBooking = bookingWidgetSchema.safeParse({
+      startDate,
+      endDate,
+      requiredQuantity: quantity,
+      deliveryOption,
+      deliveryAddress: deliveryOption === "Delivery" ? deliveryAddress : "",
+      customerPhone,
+    });
+    if (!parsedBooking.success) {
+      toast.error(parsedBooking.error.issues[0]?.message ?? "Please select valid rental dates and a contact number");
       return;
     }
 
@@ -223,8 +230,8 @@ function EquipmentDetailContent() {
       } else {
         router.push("/dashboard/rentals");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to initiate booking");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to initiate booking"));
     } finally {
       setBookingLoading(false);
     }
@@ -238,6 +245,15 @@ function EquipmentDetailContent() {
     }
     if (!reviewComment.trim()) {
       toast.error("Please provide review feedback");
+      return;
+    }
+
+    const parsedReview = reviewSchema.safeParse({
+      rating: reviewRating,
+      comment: reviewComment,
+    });
+    if (!parsedReview.success) {
+      toast.error(parsedReview.error.issues[0]?.message ?? "Please enter a rating and feedback");
       return;
     }
 
@@ -256,8 +272,8 @@ function EquipmentDetailContent() {
       setReviewComment("");
       const updated = await fetchApi<{ success: boolean; data: EquipmentDetail }>(`/equipment/${id}`);
       setItem(updated.data);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to submit review");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to submit review"));
     } finally {
       setReviewLoading(false);
     }
@@ -397,14 +413,13 @@ function EquipmentDetailContent() {
             {/* Gallery */}
             <div className="space-y-3">
               <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden border border-border bg-muted shadow-sm">
-                <img
+                <EquipmentImage
                   src={images[activeImageIndex]}
                   alt={displayTitle}
                   className="h-full w-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80";
-                  }}
+                  sizes="(max-width: 768px) 100vw, 65vw"
+                  priority
+                  fill
                 />
               </div>
 
@@ -419,14 +434,12 @@ function EquipmentDetailContent() {
                         activeImageIndex === i ? "border-amber ring-2 ring-amber/30" : "border-border opacity-70 hover:opacity-100"
                       }`}
                     >
-                      <img
+                      <EquipmentImage
                         src={img}
                         alt="Thumbnail"
+                        width={96}
+                        height={72}
                         className="h-full w-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80";
-                        }}
                       />
                     </button>
                   ))}

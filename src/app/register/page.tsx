@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { uploadToImgBB } from "@/lib/upload";
+import { apiErrorMessage } from "@/lib/api";
 import { toast } from "sonner";
 
 export default function RegisterPage() {
@@ -39,8 +40,8 @@ export default function RegisterPage() {
       } else {
         toast.error(res.error || "Failed to upload photo");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to upload photo");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to upload photo"));
     } finally {
       setUploadingPhoto(false);
       if (photoInputRef.current) photoInputRef.current.value = "";
@@ -87,8 +88,8 @@ export default function RegisterPage() {
       toast.success("Account created successfully! Welcome to EquipLoop.");
       router.push("/dashboard/rentals");
       router.refresh();
-    } catch (err: any) {
-      toast.error(err.message || "Sign up error occurred");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Sign up error occurred"));
     } finally {
       setLoading(false);
     }
@@ -115,8 +116,8 @@ export default function RegisterPage() {
       if (res?.data?.url) {
         window.location.href = res.data.url;
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Google sign up could not be initiated");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Google sign up could not be initiated"));
     } finally {
       setSocialLoading(false);
     }

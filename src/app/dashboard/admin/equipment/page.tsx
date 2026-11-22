@@ -24,7 +24,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { formatCurrency } from "@/lib/utils";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
 import { toast } from "sonner";
 import { EquipmentItem } from "@/components/equipment/EquipmentCard";
 
@@ -51,8 +51,8 @@ export default function AdminEquipmentModerationPage() {
       if (res.data) {
         setItems(res.data);
       }
-    } catch (err: any) {
-      console.warn("Failed to load moderation queue:", err.message);
+    } catch (err) {
+      console.warn("Failed to load moderation queue:", apiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -70,8 +70,8 @@ export default function AdminEquipmentModerationPage() {
       });
       toast.success(`Equipment status set to "${status}"`);
       loadEquipment();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update equipment status");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update equipment status"));
     }
   };
 
@@ -81,8 +81,8 @@ export default function AdminEquipmentModerationPage() {
       await fetchApi(`/equipment/${id}`, { method: "DELETE" });
       setItems((prev) => prev.filter((i) => i._id !== id));
       toast.success("Equipment listing deleted");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to delete equipment");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to delete equipment"));
     }
   };
 
@@ -108,8 +108,8 @@ export default function AdminEquipmentModerationPage() {
       toast.success("Equipment updated successfully");
       setEditingItem(null);
       loadEquipment();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update equipment");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update equipment"));
     } finally {
       setUpdating(false);
     }

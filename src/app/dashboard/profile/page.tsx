@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
+import { profileEditSchema } from "@/lib/schemas";
 import { uploadToImgBB } from "@/lib/upload";
 import { toast } from "sonner";
 
@@ -39,8 +40,8 @@ export default function ProfilePage() {
       } else {
         toast.error(res.error || "Failed to upload avatar");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to upload avatar");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to upload avatar"));
     } finally {
       setUploadingAvatar(false);
       if (avatarInputRef.current) {
@@ -76,6 +77,11 @@ export default function ProfilePage() {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    const parsed = profileEditSchema.safeParse({ name, phone, address });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? "Please fix the highlighted fields");
+      return;
+    }
     try {
       setLoading(true);
       await fetchApi("/users/profile", {
@@ -83,8 +89,8 @@ export default function ProfilePage() {
         body: JSON.stringify({ name, phone, address, image }),
       });
       toast.success("Account profile updated successfully");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update profile");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update profile"));
     } finally {
       setLoading(false);
     }

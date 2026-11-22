@@ -1,3 +1,5 @@
+import type { ApiResponse } from "@/types";
+
 let memoryJwt: string | null = null;
 let memoryJwtExpiresAt = 0;
 
@@ -82,7 +84,18 @@ export async function getAuthHeader(): Promise<Record<string, string>> {
   return {};
 }
 
-export async function fetchApi<T = any>(
+/** Extracts a human-readable message from any caught value, defaulting to `fallback`. */
+export function apiErrorMessage(err: unknown, fallback = "Request failed"): string {
+  if (err instanceof Error && err.message) {
+    return err.message;
+  }
+  if (typeof err === "string" && err.trim()) {
+    return err;
+  }
+  return fallback;
+}
+
+export async function fetchApi<T = unknown>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
@@ -102,10 +115,11 @@ export async function fetchApi<T = any>(
     headers,
   });
 
-  const data = await response.json().catch(() => ({}));
+  const data = (await response.json().catch(() => ({}))) as T;
 
   if (!response.ok) {
-    throw new Error(data.message || `API error: ${response.status} ${response.statusText}`);
+    const message = (data as unknown as { message?: string }).message;
+    throw new Error(message || `API error: ${response.status} ${response.statusText}`);
   }
 
   return data;

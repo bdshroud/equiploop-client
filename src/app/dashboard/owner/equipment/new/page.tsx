@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
 import { uploadToImgBB } from "@/lib/upload";
 import { toast } from "sonner";
 
@@ -94,8 +94,8 @@ export default function NewEquipmentPage() {
       } else {
         toast.error(res.error || "Failed to upload image");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to upload image to ImgBB");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to upload image to ImgBB"));
     } finally {
       setUploadingImg(false);
       if (fileInputRef.current) {
@@ -141,8 +141,8 @@ export default function NewEquipmentPage() {
 
       toast.success("Equipment submitted! It is now pending administrator review.");
       router.push("/dashboard/owner/equipment");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to list equipment");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to list equipment"));
     } finally {
       setLoading(false);
     }

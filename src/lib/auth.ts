@@ -1,20 +1,37 @@
 import { betterAuth } from "better-auth";
-import { MongoClient, Db } from "mongodb";
+import { MongoClient, Db, Collection, CollectionOptions } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { jwt } from "better-auth/plugins";
+import type { BetterAuthSession, BetterAuthUser } from "@/types";
 
 const dbName = process.env.DB_NAME || "equiploop";
+
+// MongoClient internals used by the driver to detect closed/destroyed clients.
+type ClientInternals = {
+  s?: { hasBeenClosed?: boolean };
+  topology?: {
+    isDestroyed?: () => boolean;
+    s?: { state?: string };
+  };
+};
+
+// Bound method/property reader for the Mongo driver proxies below.
+type AnyFn = (this: unknown, ...args: never[]) => unknown;
+function readBoundProp(target: object, prop: string | symbol): unknown {
+  const raw = (target as unknown as Record<string, unknown>)[prop as string];
+  return typeof raw === "function" ? (raw as AnyFn).bind(target) : raw;
+}
 
 // Global MongoClient caching with auto-reconnection for serverless lifecycle
 let cachedClient: MongoClient | null = null;
 
 function isClientDead(client: MongoClient | null): boolean {
   if (!client) return true;
-  const anyClient = client as any;
-  if (anyClient.s?.hasBeenClosed) return true;
-  if (anyClient.topology == null && anyClient.s?.hasBeenClosed) return true;
-  if (anyClient.topology?.isDestroyed?.()) return true;
-  if (anyClient.topology?.s?.state === "closed") return true;
+  const internals = client as unknown as ClientInternals;
+  if (internals.s?.hasBeenClosed) return true;
+  if (internals.topology == null && internals.s?.hasBeenClosed) return true;
+  if (internals.topology?.isDestroyed?.()) return true;
+  if (internals.topology?.s?.state === "closed") return true;
   return false;
 }
 
@@ -24,7 +41,7 @@ export function getMongoClient(): MongoClient {
     throw new Error("Missing DB_URI environment variable");
   }
 
-  const globalAny = globalThis as any;
+  const globalAny = globalThis as unknown as { _mongoClient?: MongoClient };
   if (!cachedClient) {
     cachedClient = globalAny._mongoClient || null;
   }
@@ -50,27 +67,21 @@ function getActiveDb(): Db {
 const dbProxy = new Proxy({} as Db, {
   get(_target, prop: string | symbol) {
     if (prop === "collection") {
-      return (name: string, options?: any) => {
-        return new Proxy({} as any, {
+      return (name: string, options?: CollectionOptions): Collection =>
+        new Proxy({} as Collection, {
           get(_colTarget, colProp: string | symbol) {
             const activeCol = getActiveDb().collection(name, options);
-            const val = (activeCol as any)[colProp];
-            return typeof val === "function" ? val.bind(activeCol) : val;
+            return readBoundProp(activeCol, colProp);
           },
         });
-      };
     }
-    const activeDb = getActiveDb();
-    const val = (activeDb as any)[prop];
-    return typeof val === "function" ? val.bind(activeDb) : val;
+    return readBoundProp(getActiveDb(), prop);
   },
 });
 
 const clientProxy = new Proxy({} as MongoClient, {
   get(_target, prop: string | symbol) {
-    const activeClient = getMongoClient();
-    const val = (activeClient as any)[prop];
-    return typeof val === "function" ? val.bind(activeClient) : val;
+    return readBoundProp(getMongoClient(), prop);
   },
 });
 
@@ -159,7 +170,7 @@ export const auth = betterAuth({
           id: user.id,
           name: user.name,
           email: user.email,
-          role: (user as any).role ?? "Customer",
+          role: (user as unknown as BetterAuthUser).role ?? "Customer",
         }),
       },
     }),

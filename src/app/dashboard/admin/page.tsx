@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/utils";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
 
 interface AdminAnalyticsData {
   totalUsers: number;
@@ -51,8 +51,8 @@ export default function AdminOverviewPage() {
         if (res.data) {
           setData(res.data);
         }
-      } catch (err: any) {
-        console.warn("Admin analytics error:", err.message);
+      } catch (err) {
+        console.warn("Admin analytics error:", apiErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -189,7 +189,7 @@ export default function AdminOverviewPage() {
                     borderRadius: "0.5rem",
                     fontSize: "12px",
                   }}
-                  formatter={(val: any) => [`$${val}`, "Volume"]}
+                  formatter={(val?: number | string | ReadonlyArray<number | string>) => [`$${val ?? 0}`, "Volume"]}
                 />
                 <Area
                   type="monotone"

@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
 import { toast } from "sonner";
 
 interface AdminBookingItem {
@@ -52,8 +52,8 @@ export default function AdminBookingsAuditPage() {
       if (res.data) {
         setBookings(res.data);
       }
-    } catch (err: any) {
-      console.warn("Failed to load platform bookings:", err.message);
+    } catch (err) {
+      console.warn("Failed to load platform bookings:", apiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -71,8 +71,8 @@ export default function AdminBookingsAuditPage() {
       });
       toast.success(`Booking status changed to "${status}"`);
       loadAllBookings();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update status");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update status"));
     }
   };
 

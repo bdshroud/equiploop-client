@@ -1,3 +1,5 @@
+import { apiErrorMessage } from "@/lib/api";
+
 /**
  * EquipLoop ImgBB Image Upload Service
  * Integrates with ImgBB REST API using NEXT_PUBLIC_IMGBB_API_KEY.
@@ -9,6 +11,12 @@ export interface ImgBBUploadResponse {
   displayUrl?: string;
   deleteUrl?: string;
   error?: string;
+}
+
+interface ImgBBImageUploadResponse {
+  success: boolean;
+  data?: { url: string; display_url?: string; delete_url?: string };
+  error?: { message?: string };
 }
 
 export async function uploadToImgBB(file: File): Promise<ImgBBUploadResponse> {
@@ -44,7 +52,7 @@ export async function uploadToImgBB(file: File): Promise<ImgBBUploadResponse> {
       body: formData,
     });
 
-    const data = await res.json();
+    const data: ImgBBImageUploadResponse = await res.json();
 
     if (data.success && data.data?.url) {
       return {
@@ -60,11 +68,11 @@ export async function uploadToImgBB(file: File): Promise<ImgBBUploadResponse> {
       url: "",
       error: data.error?.message || "ImgBB upload failed",
     };
-  } catch (err: any) {
+  } catch (err) {
     return {
       success: false,
       url: "",
-      error: err.message || "Network error uploading image to ImgBB",
+      error: apiErrorMessage(err, "Network error uploading image to ImgBB"),
     };
   }
 }

@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
 import { toast } from "sonner";
 
 interface OwnerBooking {
@@ -46,8 +46,8 @@ export default function OwnerBookingsPage() {
       if (res.data) {
         setBookings(res.data);
       }
-    } catch (err: any) {
-      console.warn("Could not load owner bookings:", err.message);
+    } catch (err) {
+      console.warn("Could not load owner bookings:", apiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -65,8 +65,8 @@ export default function OwnerBookingsPage() {
       });
       toast.success(`Booking status updated to "${status}"`);
       loadBookings();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update booking status");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update booking status"));
     }
   };
 

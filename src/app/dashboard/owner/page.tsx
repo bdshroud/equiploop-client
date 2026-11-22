@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { fetchApi } from "@/lib/api";
+import { apiErrorMessage, fetchApi } from "@/lib/api";
 import { toast } from "sonner";
 
 interface OwnerAnalyticsData {
@@ -57,8 +57,8 @@ export default function OwnerOverviewPage() {
       if (res.data) {
         setData(res.data);
       }
-    } catch (err: any) {
-      console.warn("Owner analytics error:", err.message);
+    } catch (err) {
+      console.warn("Owner analytics error:", apiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -76,8 +76,8 @@ export default function OwnerOverviewPage() {
       });
       toast.success(`Booking status changed to "${status}"`);
       loadAnalytics();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update status");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Failed to update status"));
     }
   };
 
@@ -198,7 +198,7 @@ export default function OwnerOverviewPage() {
                   borderRadius: "0.5rem",
                   fontSize: "12px",
                 }}
-                formatter={(val: any) => [`$${val}`, "Earnings"]}
+                formatter={(val?: number | string | ReadonlyArray<number | string>) => [`$${val ?? 0}`, "Earnings"]}
               />
               <Bar dataKey="earnings" fill="#E9A44C" radius={[6, 6, 0, 0]} />
             </BarChart>

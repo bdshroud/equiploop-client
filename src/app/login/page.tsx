@@ -8,6 +8,7 @@ import { signIn } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { apiErrorMessage } from "@/lib/api";
 import { toast } from "sonner";
 
 function LoginContent() {
@@ -42,8 +43,8 @@ function LoginContent() {
       toast.success("Welcome back to EquipLoop!");
       router.push(redirectUrl);
       router.refresh();
-    } catch (err: any) {
-      toast.error(err.message || "Sign in failed");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Sign in failed"));
     } finally {
       setLoading(false);
     }
@@ -70,8 +71,8 @@ function LoginContent() {
       if (res?.data?.url) {
         window.location.href = res.data.url;
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Google sign in could not be initiated");
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Google sign in could not be initiated"));
     } finally {
       setSocialLoading(false);
     }
