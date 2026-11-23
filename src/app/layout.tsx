@@ -52,7 +52,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className="min-h-screen flex flex-col antialiased bg-background text-foreground transition-colors selection:bg-amber/30 selection:text-foreground dark:selection:text-amber-100"
+        className="min-h-screen flex flex-col antialiased bg-background text-foreground transition-colors"
       >
         <ThemeProvider
           attribute="class"

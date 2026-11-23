@@ -142,3 +142,28 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.5);
 }
+
+/* Accessible High-Contrast Text Selection for Light and Dark Modes */
+::selection,
+*::selection {
+  background-color: #f5be6b !important;
+  color: #131b21 !important;
+}
+
+::-moz-selection,
+*::-moz-selection {
+  background-color: #f5be6b !important;
+  color: #131b21 !important;
+}
+
+.dark ::selection,
+.dark *::selection {
+  background-color: #e9a44c !important;
+  color: #131b21 !important;
+}
+
+.dark ::-moz-selection,
+.dark *::-moz-selection {
+  background-color: #e9a44c !important;
+  color: #131b21 !important;
+}
