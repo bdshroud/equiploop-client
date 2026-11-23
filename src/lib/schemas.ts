@@ -86,7 +86,7 @@ export const searchFiltersSchema = z
     rentalType: rentalTypeWithAllSchema.optional(),
     minPrice: z.coerce.number().min(0).optional(),
     maxPrice: z.coerce.number().min(0).optional(),
-    availability: z.union([z.literal(""), z.literal("true")]).optional(),
+    availability: z.union([z.literal(""), z.literal("true"), z.literal("false")]).optional(),
     sort: equipmentSortSchema.optional(),
   })
   .superRefine((value, ctx) => {

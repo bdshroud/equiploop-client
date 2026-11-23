@@ -11,6 +11,7 @@ import {
   Clock,
   ArrowUpRight,
   ShieldCheck,
+  CheckCircle2,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -31,6 +32,7 @@ import { toast } from "sonner";
 
 interface OwnerAnalyticsData {
   totalEquipment: number;
+  completedRentals: number;
   activeRentals: number;
   pendingRequests: number;
   totalEarnings: number;
@@ -97,10 +99,22 @@ export default function OwnerOverviewPage() {
 
   const stats = [
     {
-      label: "Fleet Equipment Listed",
+      label: "Total Listed Equipment",
       value: data?.totalEquipment || 0,
       icon: Layers,
-      desc: "Total machines under management",
+      desc: "Commercial machines managed",
+    },
+    {
+      label: "Completed Rentals",
+      value: data?.completedRentals || 0,
+      icon: CheckCircle2,
+      desc: "Successfully fulfilled rentals",
+    },
+    {
+      label: "Total Gross Earnings",
+      value: formatCurrency(data?.totalEarnings || 0),
+      icon: DollarSign,
+      desc: "Processed via Stripe Escrow",
     },
     {
       label: "Active On-Site Rentals",
@@ -113,12 +127,6 @@ export default function OwnerOverviewPage() {
       value: data?.pendingRequests || 0,
       icon: CalendarCheck,
       desc: "Awaiting your confirmation",
-    },
-    {
-      label: "Total Gross Earnings",
-      value: formatCurrency(data?.totalEarnings || 0),
-      icon: DollarSign,
-      desc: "Processed via Stripe Escrow",
     },
   ];
 
@@ -147,7 +155,7 @@ export default function OwnerOverviewPage() {
       </div>
 
       {/* Metrics Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {stats.map((s) => {
           const Icon = s.icon;
           return (

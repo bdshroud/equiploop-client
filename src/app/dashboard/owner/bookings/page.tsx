@@ -39,19 +39,32 @@ interface OwnerBooking {
 export default function OwnerBookingsPage() {
   const [bookings, setBookings] = React.useState<OwnerBooking[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [page, setPage] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState(1);
+  const [totalCount, setTotalCount] = React.useState(0);
 
   const loadBookings = React.useCallback(async () => {
     try {
-      const res = await fetchApi<{ success: boolean; data: OwnerBooking[] }>("/bookings/owner-bookings");
+      setLoading(true);
+      const res = await fetchApi<{
+        success: boolean;
+        data: OwnerBooking[];
+        pagination?: { total: number; page: number; limit: number; totalPages: number };
+      }>(`/bookings/owner-bookings?page=${page}&limit=10`);
+
       if (res.data) {
         setBookings(res.data);
+      }
+      if (res.pagination) {
+        setTotalPages(res.pagination.totalPages || 1);
+        setTotalCount(res.pagination.total || 0);
       }
     } catch (err) {
       console.warn("Could not load owner bookings:", apiErrorMessage(err));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page]);
 
   React.useEffect(() => {
     loadBookings();
@@ -239,6 +252,54 @@ export default function OwnerBookingsPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Controls for Owner Booking History */}
+          {totalPages > 1 && (
+            <div className="p-4 border-t border-border flex items-center justify-between bg-card text-xs">
+              <span className="text-muted-foreground">
+                Showing page <strong className="text-foreground">{page}</strong> of <strong className="text-foreground">{totalPages}</strong> ({totalCount} total bookings)
+              </span>
+
+              <div className="flex items-center gap-1.5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page <= 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="h-8 text-xs font-semibold"
+                >
+                  Previous
+                </Button>
+
+                {[...Array(totalPages)].map((_, i) => {
+                  const pNum = i + 1;
+                  return (
+                    <Button
+                      key={pNum}
+                      variant={page === pNum ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setPage(pNum)}
+                      className={`h-8 w-8 p-0 text-xs font-bold ${
+                        page === pNum ? "bg-amber text-graphite hover:bg-amber/90" : ""
+                      }`}
+                    >
+                      {pNum}
+                    </Button>
+                  );
+                })}
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page >= totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  className="h-8 text-xs font-semibold"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </Card>
       )}
     </div>

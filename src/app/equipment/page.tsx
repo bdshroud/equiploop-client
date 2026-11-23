@@ -202,12 +202,12 @@ function EquipmentBrowseContent() {
         {/* Top Control Bar: Search by Equipment Name & Location */}
         <div className="p-4 rounded-2xl bg-card border border-border shadow-xs mb-8 flex flex-col lg:flex-row items-center justify-between gap-4">
           <form onSubmit={handleFilterSubmit} className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-            {/* Equipment Name Search */}
+            {/* Equipment Title / Category Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search equipment name..."
+                placeholder="Search by title or category..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 text-xs bg-background"
@@ -401,7 +401,17 @@ function EquipmentBrowseContent() {
                       onChange={() => setAvailability("true")}
                       className="text-amber-text focus:ring-amber"
                     />
-                    <span>Available In Stock Only</span>
+                    <span>Available In Stock</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                    <input
+                      type="radio"
+                      name="avail-mobile"
+                      checked={availability === "false"}
+                      onChange={() => setAvailability("false")}
+                      className="text-amber-text focus:ring-amber"
+                    />
+                    <span>Unavailable / Booked</span>
                   </label>
                 </div>
               </div>
@@ -556,7 +566,17 @@ function EquipmentBrowseContent() {
                       onChange={() => setAvailability("true")}
                       className="text-amber-text focus:ring-amber"
                     />
-                    <span>Available In Stock Only</span>
+                    <span>Available In Stock</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                    <input
+                      type="radio"
+                      name="avail"
+                      checked={availability === "false"}
+                      onChange={() => setAvailability("false")}
+                      className="text-amber-text focus:ring-amber"
+                    />
+                    <span>Unavailable / Booked</span>
                   </label>
                 </div>
               </div>
