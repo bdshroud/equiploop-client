@@ -319,12 +319,12 @@ function EquipmentDetailContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Link & Category Path */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground mb-6">
-          <Link href="/equipment" className="hover:text-amber-text-text transition-colors flex items-center gap-1 font-medium">
+          <Link href="/equipment" className="hover:text-amber-text transition-colors flex items-center gap-1 font-medium">
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>All Equipment</span>
           </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link href={`/equipment?category=${encodeURIComponent(item.category)}`} className="hover:text-amber-text-text transition-colors">
+          <Link href={`/equipment?category=${encodeURIComponent(item.category)}`} className="hover:text-amber-text transition-colors">
             {item.category}
           </Link>
           <ChevronRight className="h-3 w-3" />

@@ -131,7 +131,7 @@ export function CategoriesSection() {
                     </div>
 
                     <div>
-                      <h3 className="font-bold text-lg leading-tight text-white group-hover:text-amber-text-text-text transition-colors">
+                      <h3 className="font-bold text-lg leading-tight text-white group-hover:text-amber-text transition-colors">
                         {cat.name}
                       </h3>
                       <p className="text-xs text-slate-300 line-clamp-1 mt-1">

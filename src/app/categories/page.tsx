@@ -117,7 +117,7 @@ export default function CategoriesPage() {
                       e.currentTarget.src = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80";
                     }}
                   />
-                  <div className="absolute top-2.5 left-2.5 h-8 w-8 rounded-lg bg-graphite/80 backdrop-blur-xs text-amber-text flex items-center justify-center">
+                  <div className="absolute top-2.5 left-2.5 h-8 w-8 rounded-lg bg-graphite/80 backdrop-blur-xs text-amber flex items-center justify-center">
                     <Icon className="h-4 w-4" />
                   </div>
                   <span className="absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-graphite/80 backdrop-blur-xs text-white">
@@ -127,7 +127,7 @@ export default function CategoriesPage() {
 
                 <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-bold text-base text-foreground group-hover:text-amber-text-text-text transition-colors">
+                    <h3 className="font-bold text-base text-foreground group-hover:text-amber-text transition-colors">
                       {c.name}
                     </h3>
                     <p className="text-xs text-muted-foreground line-clamp-2 mt-1">

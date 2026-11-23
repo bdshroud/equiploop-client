@@ -167,7 +167,7 @@ export function EquipmentCard({
         <button
           type="button"
           onClick={handleDetailsClick}
-          className="text-left group-hover:text-amber-text-text-text transition-colors"
+          className="text-left group-hover:text-amber-text transition-colors"
         >
           <h3 className="font-bold text-base leading-snug line-clamp-2 text-foreground">
             {displayTitle}

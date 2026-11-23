@@ -131,7 +131,7 @@ export function HeroBanner() {
                 key={pill}
                 type="button"
                 onClick={() => router.push(`/equipment?search=${encodeURIComponent(pill)}`)}
-                className="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 hover:text-amber-text-text transition-colors border border-white/10"
+                className="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 hover:text-amber-text transition-colors border border-white/10"
               >
                 {pill}
               </button>

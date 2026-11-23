@@ -446,7 +446,7 @@ function EquipmentBrowseContent() {
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="text-xs text-muted-foreground hover:text-amber-text-text transition-colors flex items-center gap-1"
+                  className="text-xs text-muted-foreground hover:text-amber-text transition-colors flex items-center gap-1"
                 >
                   <RotateCcw className="h-3 w-3" />
                   Reset

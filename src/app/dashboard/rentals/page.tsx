@@ -210,7 +210,7 @@ function CustomerRentalsContent() {
                   <tr key={b._id} className="hover:bg-muted/30 transition-colors">
                     {/* Equipment Name */}
                     <td className="py-3.5 px-4 font-bold text-foreground">
-                      <Link href={`/equipment/${b.equipmentId}`} className="hover:text-amber-text-text transition-colors flex items-center gap-2">
+                      <Link href={`/equipment/${b.equipmentId}`} className="hover:text-amber-text transition-colors flex items-center gap-2">
                         <EquipmentImage src={b.equipmentImage || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"} alt={b.equipmentTitle} width={48} height={36} className="h-9 w-12 rounded object-cover border border-border shrink-0" />
                         <span className="line-clamp-1 max-w-[200px]">{b.equipmentTitle}</span>
                       </Link>

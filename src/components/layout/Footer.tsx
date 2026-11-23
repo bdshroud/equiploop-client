@@ -108,12 +108,12 @@ export function Footer() {
           <div>
             <h5 className="font-semibold text-sm text-foreground tracking-wide mb-3">Popular Equipment</h5>
             <ul className="space-y-2 text-xs text-muted-foreground">
-              <li><Link href="/equipment?category=Heavy Machinery" className="hover:text-amber-text-text transition-colors">Heavy Machinery</Link></li>
-              <li><Link href="/equipment?category=Construction" className="hover:text-amber-text-text transition-colors">Construction & Concrete</Link></li>
-              <li><Link href="/equipment?category=Power Tools" className="hover:text-amber-text-text transition-colors">Industrial Power Tools</Link></li>
-              <li><Link href="/equipment?category=Material Handling" className="hover:text-amber-text-text transition-colors">Scissor & Boom Lifts</Link></li>
-              <li><Link href="/equipment?category=Generators & Power" className="hover:text-amber-text-text transition-colors">Generators & Power</Link></li>
-              <li><Link href="/equipment?category=Audio/Visual & Event Tech" className="hover:text-amber-text-text transition-colors">Audio/Visual Systems</Link></li>
+              <li><Link href="/equipment?category=Heavy Machinery" className="hover:text-amber-text transition-colors">Heavy Machinery</Link></li>
+              <li><Link href="/equipment?category=Construction" className="hover:text-amber-text transition-colors">Construction & Concrete</Link></li>
+              <li><Link href="/equipment?category=Power Tools" className="hover:text-amber-text transition-colors">Industrial Power Tools</Link></li>
+              <li><Link href="/equipment?category=Material Handling" className="hover:text-amber-text transition-colors">Scissor & Boom Lifts</Link></li>
+              <li><Link href="/equipment?category=Generators & Power" className="hover:text-amber-text transition-colors">Generators & Power</Link></li>
+              <li><Link href="/equipment?category=Audio/Visual & Event Tech" className="hover:text-amber-text transition-colors">Audio/Visual Systems</Link></li>
             </ul>
           </div>
 
@@ -121,12 +121,12 @@ export function Footer() {
           <div>
             <h5 className="font-semibold text-sm text-foreground tracking-wide mb-3">Platform</h5>
             <ul className="space-y-2 text-xs text-muted-foreground">
-              <li><Link href="/equipment" className="hover:text-amber-text-text transition-colors">All Equipment</Link></li>
-              <li><Link href="/categories" className="hover:text-amber-text-text transition-colors">Category Catalog</Link></li>
-              <li><Link href="/how-it-works" className="hover:text-amber-text-text transition-colors">How EquipLoop Works</Link></li>
-              <li><Link href="/about" className="hover:text-amber-text-text transition-colors">About Us</Link></li>
-              <li><Link href="/contact" className="hover:text-amber-text-text transition-colors">Contact Support</Link></li>
-              <li><Link href="/dashboard/owner" className="hover:text-amber-text-text transition-colors">Owner Fleet Portal</Link></li>
+              <li><Link href="/equipment" className="hover:text-amber-text transition-colors">All Equipment</Link></li>
+              <li><Link href="/categories" className="hover:text-amber-text transition-colors">Category Catalog</Link></li>
+              <li><Link href="/how-it-works" className="hover:text-amber-text transition-colors">How EquipLoop Works</Link></li>
+              <li><Link href="/about" className="hover:text-amber-text transition-colors">About Us</Link></li>
+              <li><Link href="/contact" className="hover:text-amber-text transition-colors">Contact Support</Link></li>
+              <li><Link href="/dashboard/owner" className="hover:text-amber-text transition-colors">Owner Fleet Portal</Link></li>
             </ul>
           </div>
 
@@ -140,7 +140,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-3.5 w-3.5 text-amber-text shrink-0" />
-                <a href="mailto:support@equiploop.com" className="hover:text-amber-text-text transition-colors">
+                <a href="mailto:support@equiploop.com" className="hover:text-amber-text transition-colors">
                   support@equiploop.com
                 </a>
               </li>
@@ -159,9 +159,9 @@ export function Footer() {
         <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
           <p>© 2026 EquipLoop Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <Link href="/terms" className="hover:text-amber-text-text transition-colors">Terms of Service</Link>
-            <Link href="/privacy" className="hover:text-amber-text-text transition-colors">Privacy Policy</Link>
-            <Link href="/cookies" className="hover:text-amber-text-text transition-colors">Cookie Preferences</Link>
+            <Link href="/terms" className="hover:text-amber-text transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-amber-text transition-colors">Privacy Policy</Link>
+            <Link href="/cookies" className="hover:text-amber-text transition-colors">Cookie Preferences</Link>
           </div>
         </div>
       </div>

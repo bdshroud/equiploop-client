@@ -101,7 +101,7 @@ export default function FavoritesPage() {
                       <EquipmentImage src={item.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"} alt={item.title} width={56} height={40} className="h-10 w-14 rounded-lg object-cover border border-border" />
                     </td>
                     <td className="py-3 px-4 font-bold text-foreground">
-                      <Link href={`/equipment/${item._id}`} className="hover:text-amber-text-text transition-colors">
+                      <Link href={`/equipment/${item._id}`} className="hover:text-amber-text transition-colors">
                         {item.title}
                       </Link>
                     </td>

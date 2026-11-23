@@ -52,7 +52,7 @@ export function HowItWorksSection() {
                 className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card shadow-xs group hover:border-amber/50 hover:shadow-md transition-all duration-300"
               >
                 {/* Step Number Badge */}
-                <div className="absolute -top-3.5 px-2.5 py-0.5 rounded-full bg-graphite dark:bg-amber text-amber-text dark:text-graphite text-xs font-black shadow-xs">
+                <div className="absolute -top-3.5 px-2.5 py-0.5 rounded-full bg-graphite dark:bg-amber text-amber dark:text-graphite text-xs font-black shadow-xs">
                   STEP {s.step}
                 </div>
 
