@@ -72,7 +72,7 @@ export function CategoriesSection() {
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1.5">
+            <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1.5">
               Equipment Categories
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
@@ -85,7 +85,7 @@ export function CategoriesSection() {
 
           <Link
             href="/equipment"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber hover:underline group"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-text hover:underline group"
           >
             <span>View all inventory</span>
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -131,7 +131,7 @@ export function CategoriesSection() {
                     </div>
 
                     <div>
-                      <h3 className="font-bold text-lg leading-tight text-white group-hover:text-amber transition-colors">
+                      <h3 className="font-bold text-lg leading-tight text-white group-hover:text-amber-text-text-text transition-colors">
                         {cat.name}
                       </h3>
                       <p className="text-xs text-slate-300 line-clamp-1 mt-1">

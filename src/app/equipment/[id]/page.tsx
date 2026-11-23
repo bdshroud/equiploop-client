@@ -319,12 +319,12 @@ function EquipmentDetailContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Link & Category Path */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground mb-6">
-          <Link href="/equipment" className="hover:text-amber transition-colors flex items-center gap-1 font-medium">
+          <Link href="/equipment" className="hover:text-amber-text-text transition-colors flex items-center gap-1 font-medium">
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>All Equipment</span>
           </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link href={`/equipment?category=${encodeURIComponent(item.category)}`} className="hover:text-amber transition-colors">
+          <Link href={`/equipment?category=${encodeURIComponent(item.category)}`} className="hover:text-amber-text-text transition-colors">
             {item.category}
           </Link>
           <ChevronRight className="h-3 w-3" />
@@ -364,7 +364,7 @@ function EquipmentDetailContent() {
 
             <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
               <div className="flex items-center gap-1 text-foreground font-semibold">
-                <Star className="h-4 w-4 fill-amber text-amber" />
+                <Star className="h-4 w-4 fill-amber text-amber-text" />
                 <span>{(item.rating || 5.0).toFixed(1)}</span>
                 <span className="text-muted-foreground font-normal">({item.totalReviews || 0} reviews)</span>
               </div>
@@ -450,7 +450,7 @@ function EquipmentDetailContent() {
             {/* Description */}
             <Card className="p-6 rounded-2xl">
               <h2 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
-                <Wrench className="h-5 w-5 text-amber" />
+                <Wrench className="h-5 w-5 text-amber-text" />
                 <span>Equipment Overview & Purpose</span>
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
@@ -461,7 +461,7 @@ function EquipmentDetailContent() {
             {/* Rental Terms and Conditions */}
             <Card className="p-6 rounded-2xl border-amber/30 bg-amber/5">
               <h2 className="text-base font-bold text-foreground mb-2 flex items-center gap-2">
-                <FileText className="h-4 w-4 text-amber" />
+                <FileText className="h-4 w-4 text-amber-text" />
                 <span>Rental Terms & Conditions</span>
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -531,7 +531,7 @@ function EquipmentDetailContent() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-1 text-sm font-bold text-amber bg-amber/10 px-3 py-1.5 rounded-lg">
+                <div className="flex items-center gap-1 text-sm font-bold text-amber-text bg-amber/10 px-3 py-1.5 rounded-lg">
                   <Star className="h-4 w-4 fill-amber" />
                   <span>{(item.rating || 5.0).toFixed(1)} / 5.0</span>
                 </div>
@@ -553,7 +553,7 @@ function EquipmentDetailContent() {
                         </div>
                         <div className="flex items-center gap-0.5">
                           {[...Array(rev.rating || 5)].map((_, i) => (
-                            <Star key={i} className="h-3 w-3 fill-amber text-amber" />
+                            <Star key={i} className="h-3 w-3 fill-amber text-amber-text" />
                           ))}
                         </div>
                       </div>
@@ -707,7 +707,7 @@ function EquipmentDetailContent() {
                       onClick={() => setDeliveryOption("Pickup")}
                       className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
                         deliveryOption === "Pickup"
-                          ? "border-amber bg-amber/15 text-amber"
+                          ? "border-amber bg-amber/15 text-amber-text"
                           : "border-border bg-muted/40 text-muted-foreground hover:text-foreground"
                       }`}
                     >
@@ -720,7 +720,7 @@ function EquipmentDetailContent() {
                       onClick={() => setDeliveryOption("Delivery")}
                       className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
                         deliveryOption === "Delivery"
-                          ? "border-amber bg-amber/15 text-amber"
+                          ? "border-amber bg-amber/15 text-amber-text"
                           : "border-border bg-muted/40 text-muted-foreground hover:text-foreground"
                       }`}
                     >
@@ -786,7 +786,7 @@ function EquipmentDetailContent() {
 
                   <div className="pt-2 border-t border-border flex justify-between text-sm font-extrabold text-foreground">
                     <span>Total Rental Amount</span>
-                    <span className="text-amber">{formatCurrency(totalAmount)}</span>
+                    <span className="text-amber-text">{formatCurrency(totalAmount)}</span>
                   </div>
                 </div>
 

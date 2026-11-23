@@ -181,7 +181,7 @@ function LoginContent() {
         <CardFooter className="flex justify-center border-t border-border pt-4">
           <p className="text-xs text-muted-foreground">
             Don&apos;t have an account yet?{" "}
-            <Link href="/register" className="font-bold text-amber hover:underline">
+            <Link href="/register" className="font-bold text-amber-text hover:underline">
               Create an account
             </Link>
           </p>

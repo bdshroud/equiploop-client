@@ -44,7 +44,7 @@ export function TestimonialsSection() {
     <section className="py-16 sm:py-20 bg-background transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1.5">
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1.5">
             Verified Contractor Feedback
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
@@ -70,7 +70,7 @@ export function TestimonialsSection() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-1">
                     {[...Array(rev.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-amber text-amber" />
+                      <Star key={i} className="h-4 w-4 fill-amber text-amber-text" />
                     ))}
                   </div>
                   <Quote className="h-6 w-6 text-muted-foreground/30" />
@@ -96,7 +96,7 @@ export function TestimonialsSection() {
                     <p className="text-[10px] text-muted-foreground truncate">{rev.role}</p>
                   </div>
                 </div>
-                <div className="mt-2 text-[10px] font-medium text-amber bg-amber/10 px-2 py-0.5 rounded truncate">
+                <div className="mt-2 text-[10px] font-medium text-amber-text bg-amber-surface border border-amber-surface-border px-2 py-0.5 rounded truncate">
                   Rented: {rev.equipment}
                 </div>
               </div>

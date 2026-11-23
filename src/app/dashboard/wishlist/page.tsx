@@ -40,7 +40,7 @@ export default function WishlistPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
+        <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1">
           Saved Fleet Equipment
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
@@ -59,7 +59,7 @@ export default function WishlistPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="p-12 text-center rounded-2xl border border-dashed border-border bg-card">
-          <div className="h-12 w-12 rounded-full bg-amber/15 text-amber mx-auto flex items-center justify-center mb-3">
+          <div className="h-12 w-12 rounded-full bg-amber/15 text-amber-text mx-auto flex items-center justify-center mb-3">
             <Bookmark className="h-6 w-6" />
           </div>
           <h3 className="font-bold text-lg text-foreground">Your Wishlist is Empty</h3>

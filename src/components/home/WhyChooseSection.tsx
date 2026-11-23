@@ -38,7 +38,7 @@ export function WhyChooseSection() {
     <section className="py-16 sm:py-20 bg-muted/30 border-y border-border/60 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1.5">
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1.5">
             The EquipLoop Advantage
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
@@ -57,7 +57,7 @@ export function WhyChooseSection() {
                 key={p.title}
                 className="p-6 rounded-2xl bg-card border border-border hover:border-amber/40 transition-colors shadow-xs"
               >
-                <div className="h-10 w-10 rounded-xl bg-amber/15 text-amber flex items-center justify-center mb-4">
+                <div className="h-10 w-10 rounded-xl bg-amber/15 text-amber-text flex items-center justify-center mb-4">
                   <Icon className="h-5 w-5" />
                 </div>
                 <h3 className="font-bold text-base text-foreground mb-1.5">

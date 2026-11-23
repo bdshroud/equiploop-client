@@ -121,7 +121,7 @@ export default function OwnerEquipmentListPage() {
       {/* Header and Add Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1">
             Machine Fleet Management
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
@@ -160,7 +160,7 @@ export default function OwnerEquipmentListPage() {
         </div>
       ) : filteredItems.length === 0 ? (
         <div className="p-12 text-center rounded-2xl border border-dashed border-border bg-card">
-          <div className="h-12 w-12 rounded-full bg-amber/15 text-amber mx-auto flex items-center justify-center mb-3">
+          <div className="h-12 w-12 rounded-full bg-amber/15 text-amber-text mx-auto flex items-center justify-center mb-3">
             <Layers className="h-6 w-6" />
           </div>
           <h3 className="font-bold text-lg text-foreground">No Equipment Listed Yet</h3>
@@ -283,7 +283,7 @@ export default function OwnerEquipmentListPage() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="text-base font-bold flex items-center gap-2">
-                <Edit className="h-4 w-4 text-amber" />
+                <Edit className="h-4 w-4 text-amber-text" />
                 <span>Update Equipment Listing</span>
               </DialogTitle>
             </DialogHeader>

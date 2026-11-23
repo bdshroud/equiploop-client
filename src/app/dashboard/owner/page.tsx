@@ -127,7 +127,7 @@ export default function OwnerOverviewPage() {
       {/* Header and Quick Add */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1">
             Fleet Operations & Yield
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
@@ -154,7 +154,7 @@ export default function OwnerOverviewPage() {
             <Card key={s.label} className="p-5 rounded-2xl border-border bg-card shadow-xs">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-muted-foreground">{s.label}</span>
-                <div className="h-8 w-8 rounded-lg bg-amber/15 text-amber flex items-center justify-center">
+                <div className="h-8 w-8 rounded-lg bg-amber/15 text-amber-text flex items-center justify-center">
                   <Icon className="h-4 w-4" />
                 </div>
               </div>
@@ -215,7 +215,7 @@ export default function OwnerOverviewPage() {
               Manage contractor booking requests and verify dispatch
             </p>
           </div>
-          <Link href="/dashboard/owner/bookings" className="text-xs font-bold text-amber hover:underline">
+          <Link href="/dashboard/owner/bookings" className="text-xs font-bold text-amber-text hover:underline">
             View All Inquiries →
           </Link>
         </div>

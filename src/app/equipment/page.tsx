@@ -188,7 +188,7 @@ function EquipmentBrowseContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Breadcrumb & Title */}
         <div className="mb-8">
-          <div className="text-xs font-semibold uppercase tracking-wider text-amber mb-1">
+          <div className="text-xs font-semibold uppercase tracking-wider text-amber-text mb-1">
             Commercial Fleet Catalog
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
@@ -293,7 +293,7 @@ function EquipmentBrowseContent() {
           <SheetContent side="left" className="w-[320px] sm:w-[380px] p-6 overflow-y-auto">
             <SheetHeader className="text-left pb-3 border-b border-border">
               <SheetTitle className="font-bold text-base flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4 text-amber" />
+                <SlidersHorizontal className="h-4 w-4 text-amber-text" />
                 Filter Equipment
               </SheetTitle>
             </SheetHeader>
@@ -314,7 +314,7 @@ function EquipmentBrowseContent() {
                       }}
                       className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center justify-between ${
                         category === cat
-                          ? "bg-amber/15 text-amber font-bold"
+                          ? "bg-amber/15 text-amber-text font-bold"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
                     >
@@ -343,7 +343,7 @@ function EquipmentBrowseContent() {
                       }}
                       className={`p-2 rounded-lg border text-xs font-semibold text-center transition-all ${
                         rentalType === rt
-                          ? "border-amber bg-amber/15 text-amber"
+                          ? "border-amber bg-amber/15 text-amber-text"
                           : "border-border bg-background text-muted-foreground hover:text-foreground"
                       }`}
                     >
@@ -389,7 +389,7 @@ function EquipmentBrowseContent() {
                       name="avail-mobile"
                       checked={availability === ""}
                       onChange={() => setAvailability("")}
-                      className="text-amber focus:ring-amber"
+                      className="text-amber-text focus:ring-amber"
                     />
                     <span>All Inventory</span>
                   </label>
@@ -399,7 +399,7 @@ function EquipmentBrowseContent() {
                       name="avail-mobile"
                       checked={availability === "true"}
                       onChange={() => setAvailability("true")}
-                      className="text-amber focus:ring-amber"
+                      className="text-amber-text focus:ring-amber"
                     />
                     <span>Available In Stock Only</span>
                   </label>
@@ -440,13 +440,13 @@ function EquipmentBrowseContent() {
             <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-6">
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <span className="font-bold text-sm text-foreground flex items-center gap-1.5">
-                  <SlidersHorizontal className="h-4 w-4 text-amber" />
+                  <SlidersHorizontal className="h-4 w-4 text-amber-text" />
                   Filter Equipment
                 </span>
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="text-xs text-muted-foreground hover:text-amber transition-colors flex items-center gap-1"
+                  className="text-xs text-muted-foreground hover:text-amber-text-text transition-colors flex items-center gap-1"
                 >
                   <RotateCcw className="h-3 w-3" />
                   Reset
@@ -469,7 +469,7 @@ function EquipmentBrowseContent() {
                       }}
                       className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center justify-between ${
                         category === cat
-                          ? "bg-amber/15 text-amber font-bold"
+                          ? "bg-amber/15 text-amber-text font-bold"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
                     >
@@ -498,7 +498,7 @@ function EquipmentBrowseContent() {
                       }}
                       className={`p-2 rounded-lg border text-xs font-semibold text-center transition-all ${
                         rentalType === rt
-                          ? "border-amber bg-amber/15 text-amber"
+                          ? "border-amber bg-amber/15 text-amber-text"
                           : "border-border bg-background text-muted-foreground hover:text-foreground"
                       }`}
                     >
@@ -544,7 +544,7 @@ function EquipmentBrowseContent() {
                       name="avail"
                       checked={availability === ""}
                       onChange={() => setAvailability("")}
-                      className="text-amber focus:ring-amber"
+                      className="text-amber-text focus:ring-amber"
                     />
                     <span>All Inventory</span>
                   </label>
@@ -554,7 +554,7 @@ function EquipmentBrowseContent() {
                       name="avail"
                       checked={availability === "true"}
                       onChange={() => setAvailability("true")}
-                      className="text-amber focus:ring-amber"
+                      className="text-amber-text focus:ring-amber"
                     />
                     <span>Available In Stock Only</span>
                   </label>
@@ -599,7 +599,7 @@ function EquipmentBrowseContent() {
               </div>
             ) : items.length === 0 ? (
               <div className="p-12 text-center rounded-2xl border border-dashed border-border bg-card">
-                <div className="h-12 w-12 rounded-full bg-amber/15 text-amber mx-auto flex items-center justify-center mb-3">
+                <div className="h-12 w-12 rounded-full bg-amber/15 text-amber-text mx-auto flex items-center justify-center mb-3">
                   <Search className="h-6 w-6" />
                 </div>
                 <h3 className="font-bold text-lg text-foreground">No Machinery Found</h3>

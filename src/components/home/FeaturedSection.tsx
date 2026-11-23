@@ -241,7 +241,7 @@ export function FeaturedSection() {
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber mb-1.5">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-text mb-1.5">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Handpicked Machinery</span>
             </div>
@@ -255,7 +255,7 @@ export function FeaturedSection() {
 
           <Link
             href="/equipment"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber hover:underline group"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-text hover:underline group"
           >
             <span>Explore all equipment</span>
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

@@ -73,7 +73,7 @@ export default function OwnerBookingsPage() {
   const getStatusBadge = (status: OwnerBooking["status"]) => {
     switch (status) {
       case "Pending":
-        return <Badge variant="secondary" className="bg-amber/15 text-amber border-amber/30 text-[10px]">Pending</Badge>;
+        return <Badge variant="secondary" className="bg-amber/15 text-amber-text border-amber/30 text-[10px]">Pending</Badge>;
       case "Confirmed":
         return <Badge variant="info" className="text-[10px]">Confirmed</Badge>;
       case "Active":
@@ -90,7 +90,7 @@ export default function OwnerBookingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
+        <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1">
           Owner Fleet Management
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
@@ -109,7 +109,7 @@ export default function OwnerBookingsPage() {
         </div>
       ) : bookings.length === 0 ? (
         <div className="p-12 text-center rounded-2xl border border-dashed border-border bg-card">
-          <div className="h-12 w-12 rounded-full bg-amber/15 text-amber mx-auto flex items-center justify-center mb-3">
+          <div className="h-12 w-12 rounded-full bg-amber/15 text-amber-text mx-auto flex items-center justify-center mb-3">
             <CalendarCheck className="h-6 w-6" />
           </div>
           <h3 className="font-bold text-lg text-foreground">No Equipment Rentals Yet</h3>
@@ -144,7 +144,7 @@ export default function OwnerBookingsPage() {
                         <div className="text-[11px] text-muted-foreground">{b.customerEmail}</div>
                         {b.customerPhone && (
                           <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-                            <Phone className="h-3 w-3 text-amber" />
+                            <Phone className="h-3 w-3 text-amber-text" />
                             <span>{b.customerPhone}</span>
                           </div>
                         )}

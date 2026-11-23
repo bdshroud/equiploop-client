@@ -33,7 +33,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label="Toggle theme"
     >
       {isDark ? (
-        <Sun className="h-4 w-4 text-amber-400 transition-transform rotate-0 hover:rotate-90 duration-300" />
+        <Sun className="h-4 w-4 text-amber-text-text transition-transform rotate-0 hover:rotate-90 duration-300" />
       ) : (
         <Moon className="h-4 w-4 text-slate-700 transition-transform rotate-0 hover:-rotate-12 duration-300" />
       )}

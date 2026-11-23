@@ -106,7 +106,7 @@ export default function AdminOverviewPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1 flex items-center gap-1.5">
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1 flex items-center gap-1.5">
             <ShieldCheck className="h-3.5 w-3.5" />
             <span>Platform Governance</span>
           </div>
@@ -140,7 +140,7 @@ export default function AdminOverviewPage() {
             <Card key={m.label} className="p-5 rounded-2xl border-border bg-card shadow-xs">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-muted-foreground">{m.label}</span>
-                <div className="h-8 w-8 rounded-lg bg-amber/15 text-amber flex items-center justify-center">
+                <div className="h-8 w-8 rounded-lg bg-amber/15 text-amber-text flex items-center justify-center">
                   <Icon className="h-4 w-4" />
                 </div>
               </div>

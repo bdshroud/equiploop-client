@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 export default function NotFoundPage() {
   return (
     <div className="min-h-[calc(100vh-4rem-12rem)] flex flex-col items-center justify-center p-6 text-center">
-      <div className="h-16 w-16 rounded-2xl bg-amber/15 text-amber flex items-center justify-center mb-4">
+      <div className="h-16 w-16 rounded-2xl bg-amber-surface text-amber-text border border-amber-surface-border flex items-center justify-center mb-4">
         <Wrench className="h-8 w-8" />
       </div>
 
-      <span className="text-4xl font-black text-amber">404</span>
+      <span className="text-4xl font-black text-amber-text">404</span>
       <h1 className="text-2xl font-black text-foreground tracking-tight mt-1">
         Equipment Page Not Found
       </h1>

@@ -99,7 +99,7 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
+        <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1">
           Identity & Contact Details
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
@@ -221,7 +221,7 @@ export default function ProfilePage() {
                     size="sm"
                     disabled={uploadingAvatar}
                     onClick={() => avatarInputRef.current?.click()}
-                    className="h-7 text-[11px] px-2.5 font-semibold text-amber border-amber/40 hover:bg-amber/10"
+                    className="h-7 text-[11px] px-2.5 font-semibold text-amber-text border-amber/40 hover:bg-amber/10"
                   >
                     <Upload className="h-3 w-3 mr-1" />
                     {uploadingAvatar ? "Uploading..." : "Upload to ImgBB"}

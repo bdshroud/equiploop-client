@@ -79,7 +79,7 @@ export function Navbar() {
             </div>
             <div className="flex flex-col">
               <span className="font-extrabold text-lg tracking-tight text-foreground flex items-center gap-1">
-                Equip<span className="text-amber">Loop</span>
+                Equip<span className="text-amber-text">Loop</span>
               </span>
               <span className="hidden sm:inline-block -mt-1 text-[10px] uppercase font-semibold tracking-wider text-muted-foreground">
                 Commercial Rentals
@@ -97,7 +97,7 @@ export function Navbar() {
                   href={link.href}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? "text-amber font-semibold bg-amber/10"
+                      ? "text-amber-text font-semibold bg-amber/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                   }`}
                 >
@@ -121,7 +121,7 @@ export function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative flex items-center gap-2.5 rounded-full p-1 pl-2 hover:bg-muted focus-visible:ring-1 focus-visible:ring-amber"
+                  className="relative flex items-center gap-2.5 rounded-full p-1 pl-2 hover:bg-muted focus-visible:ring-1 focus-visible:ring-amber-text"
                 >
                   <Avatar className="h-8 w-8 border border-border">
                     <AvatarImage src={user.image || ""} alt={user.name || "User"} />
@@ -158,7 +158,7 @@ export function Navbar() {
                 {userRole === "Admin" && (
                   <>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/admin" className="flex items-center gap-2 cursor-pointer font-medium text-amber">
+                      <Link href="/dashboard/admin" className="flex items-center gap-2 cursor-pointer font-medium text-amber-text">
                         <ShieldCheck className="h-4 w-4" />
                         <span>Admin Console</span>
                       </Link>
@@ -175,7 +175,7 @@ export function Navbar() {
                 {userRole === "Owner" && (
                   <>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/owner" className="flex items-center gap-2 cursor-pointer font-medium text-amber">
+                      <Link href="/dashboard/owner" className="flex items-center gap-2 cursor-pointer font-medium text-amber-text">
                         <LayoutDashboard className="h-4 w-4" />
                         <span>Fleet Overview</span>
                       </Link>
@@ -255,7 +255,7 @@ export function Navbar() {
                       <Wrench className="h-4 w-4" />
                     </div>
                     <SheetTitle className="text-lg font-black tracking-tight">
-                      Equip<span className="text-amber">Loop</span>
+                      Equip<span className="text-amber-text">Loop</span>
                     </SheetTitle>
                   </div>
                 </SheetHeader>
@@ -268,7 +268,7 @@ export function Navbar() {
                       onClick={() => setSheetOpen(false)}
                       className={`block px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
                         pathname === link.href
-                          ? "bg-amber/15 text-amber"
+                          ? "bg-amber/15 text-amber-text"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
                     >
@@ -284,7 +284,7 @@ export function Navbar() {
                       <Link
                         href={getDashboardHome()}
                         onClick={() => setSheetOpen(false)}
-                        className="block px-3 py-2.5 rounded-lg text-sm font-semibold text-amber hover:bg-amber/10"
+                        className="block px-3 py-2.5 rounded-lg text-sm font-semibold text-amber-text hover:bg-amber/10"
                       >
                         Dashboard Overview
                       </Link>

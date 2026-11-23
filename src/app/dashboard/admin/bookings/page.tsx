@@ -79,7 +79,7 @@ export default function AdminBookingsAuditPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1 flex items-center gap-1.5">
+        <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1 flex items-center gap-1.5">
           <ShieldCheck className="h-3.5 w-3.5" />
           <span>Audit & Transaction Ledger</span>
         </div>

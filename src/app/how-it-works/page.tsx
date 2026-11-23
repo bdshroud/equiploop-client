@@ -91,7 +91,7 @@ export default function HowItWorksPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Title */}
         <div className="text-center max-w-2xl mx-auto">
-          <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1.5">
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1.5">
             Operational Blueprint
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
@@ -114,8 +114,8 @@ export default function HowItWorksPage() {
               const Icon = s.icon;
               return (
                 <div key={s.num} className="p-6 rounded-2xl border border-border bg-card shadow-xs relative">
-                  <span className="text-3xl font-black text-amber/40 block mb-2">{s.num}</span>
-                  <div className="h-10 w-10 rounded-xl bg-amber/15 text-amber flex items-center justify-center mb-3">
+                  <span className="text-3xl font-black text-amber-text/50 block mb-2">{s.num}</span>
+                  <div className="h-10 w-10 rounded-xl bg-amber/15 text-amber-text flex items-center justify-center mb-3">
                     <Icon className="h-5 w-5" />
                   </div>
                   <h3 className="font-bold text-base text-foreground mb-1">{s.title}</h3>
@@ -138,8 +138,8 @@ export default function HowItWorksPage() {
               const Icon = s.icon;
               return (
                 <div key={s.num} className="p-6 rounded-2xl border border-border bg-card shadow-xs relative">
-                  <span className="text-3xl font-black text-amber/40 block mb-2">{s.num}</span>
-                  <div className="h-10 w-10 rounded-xl bg-amber/15 text-amber flex items-center justify-center mb-3">
+                  <span className="text-3xl font-black text-amber-text/50 block mb-2">{s.num}</span>
+                  <div className="h-10 w-10 rounded-xl bg-amber/15 text-amber-text flex items-center justify-center mb-3">
                     <Icon className="h-5 w-5" />
                   </div>
                   <h3 className="font-bold text-base text-foreground mb-1">{s.title}</h3>
@@ -153,7 +153,7 @@ export default function HowItWorksPage() {
         {/* FAQ Section */}
         <div className="pt-8 border-t border-border">
           <div className="text-center max-w-xl mx-auto mb-10">
-            <div className="h-10 w-10 rounded-full bg-amber/15 text-amber mx-auto flex items-center justify-center mb-2">
+            <div className="h-10 w-10 rounded-full bg-amber/15 text-amber-text mx-auto flex items-center justify-center mb-2">
               <HelpCircle className="h-5 w-5" />
             </div>
             <h2 className="text-2xl font-bold text-foreground">Frequently Asked Questions</h2>

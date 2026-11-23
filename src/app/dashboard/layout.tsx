@@ -68,7 +68,7 @@ export default function DashboardLayout({
   if (!session?.user) {
     return (
       <div className="min-h-[calc(100vh-4rem-12rem)] flex flex-col items-center justify-center p-6 text-center">
-        <div className="h-14 w-14 rounded-2xl bg-amber/15 text-amber flex items-center justify-center mb-4">
+        <div className="h-14 w-14 rounded-2xl bg-amber/15 text-amber-text flex items-center justify-center mb-4">
           <Wrench className="h-7 w-7" />
         </div>
         <h2 className="text-2xl font-bold mb-2 text-foreground">Sign In Required</h2>
@@ -155,7 +155,7 @@ export default function DashboardLayout({
         {role === "Customer" && (
           <div className="p-4 rounded-xl bg-amber/10 border border-amber/20 space-y-2">
             <h4 className="font-bold text-xs text-foreground flex items-center gap-1.5">
-              <Building className="h-3.5 w-3.5 text-amber" />
+              <Building className="h-3.5 w-3.5 text-amber-text" />
               <span>Own Equipment?</span>
             </h4>
             <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -211,7 +211,7 @@ export default function DashboardLayout({
                       <Wrench className="h-4 w-4" />
                     </div>
                     <SheetTitle className="text-base font-black">
-                      Equip<span className="text-amber">Loop</span>
+                      Equip<span className="text-amber-text">Loop</span>
                     </SheetTitle>
                   </div>
                 </SheetHeader>

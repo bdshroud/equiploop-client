@@ -158,7 +158,7 @@ export default function NewEquipmentPage() {
           </Button>
         </Link>
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-amber">
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-text">
             Fleet Expansion
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
@@ -173,10 +173,10 @@ export default function NewEquipmentPage() {
       {/* Moderation Notice Badge */}
       <div className="p-3.5 rounded-xl border border-amber/30 bg-amber/10 flex items-center justify-between gap-3 text-xs text-foreground">
         <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-amber shrink-0" />
+          <Clock className="h-4 w-4 text-amber-text shrink-0" />
           <span>
             <strong>Status Notice:</strong> All newly added equipment will be marked as{" "}
-            <span className="font-bold text-amber">Pending</span> until approved by platform administrators.
+            <span className="font-bold text-amber-text">Pending</span> until approved by platform administrators.
           </span>
         </div>
         <Badge variant="amber" className="text-[10px] shrink-0 font-bold">
@@ -188,7 +188,7 @@ export default function NewEquipmentPage() {
         {/* General Details */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
           <h2 className="font-bold text-base text-foreground flex items-center gap-2">
-            <Wrench className="h-4 w-4 text-amber" />
+            <Wrench className="h-4 w-4 text-amber-text" />
             <span>Equipment Identity & Classification</span>
           </h2>
 
@@ -283,7 +283,7 @@ export default function NewEquipmentPage() {
         {/* Pricing, Quantity & Terms */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
           <h2 className="font-bold text-base text-foreground flex items-center gap-2">
-            <DollarSign className="h-4 w-4 text-amber" />
+            <DollarSign className="h-4 w-4 text-amber-text" />
             <span>Rental Terms & Inventory</span>
           </h2>
 
@@ -350,7 +350,7 @@ export default function NewEquipmentPage() {
         {/* Location */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
           <h2 className="font-bold text-base text-foreground flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-amber" />
+            <MapPin className="h-4 w-4 text-amber-text" />
             <span>Equipment Location</span>
           </h2>
 
@@ -392,7 +392,7 @@ export default function NewEquipmentPage() {
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-bold text-base text-foreground flex items-center gap-2">
-              <ImageIcon className="h-4 w-4 text-amber" />
+              <ImageIcon className="h-4 w-4 text-amber-text" />
               <span>Equipment Images (ImgBB Upload / Direct Link)</span>
             </h2>
             <div className="flex items-center gap-2">
@@ -410,7 +410,7 @@ export default function NewEquipmentPage() {
                 size="sm"
                 disabled={uploadingImg}
                 onClick={() => fileInputRef.current?.click()}
-                className="text-xs font-semibold border-amber/40 hover:bg-amber/10 text-amber"
+                className="text-xs font-semibold border-amber/40 hover:bg-amber/10 text-amber-text"
               >
                 {uploadingImg ? "Uploading to ImgBB..." : "Upload via ImgBB"}
               </Button>

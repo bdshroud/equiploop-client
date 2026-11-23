@@ -18,7 +18,7 @@
     --secondary-foreground: 206 25% 17%;
 
     --muted: 48 10% 92%;
-    --muted-foreground: 207 11% 43%;
+    --muted-foreground: 206 15% 36%;
 
     --accent: 34 85% 94%;
     --accent-foreground: 206 25% 17%;
@@ -35,6 +35,12 @@
     --brand-graphite: #202c35;
     --brand-amber: #e9a44c;
     --brand-warm-white: #f7f7f3;
+
+    /* Readable amber for text/icons on light surfaces. Keeps brand amber for fills. */
+    --amber-text: 32 94% 34%;
+    --amber-text-hover: 32 94% 28%;
+    --amber-surface: 38 92% 94%;
+    --amber-surface-border: 35 70% 76%;
   }
 
   .dark {
@@ -65,6 +71,12 @@
     --border: 206 20% 26%;
     --input: 206 20% 26%;
     --ring: 34 78% 61%;
+
+    /* In dark mode, brand amber already has strong contrast on dark surfaces. */
+    --amber-text: 34 78% 61%;
+    --amber-text-hover: 34 78% 68%;
+    --amber-surface: 34 45% 18%;
+    --amber-surface-border: 34 55% 32%;
   }
 }
 
@@ -92,6 +104,10 @@
   --color-graphite: #202c35;
   --color-amber: #e9a44c;
   --color-warm-white: #f7f7f3;
+
+  --color-amber-text: hsl(var(--amber-text));
+  --color-amber-surface: hsl(var(--amber-surface));
+  --color-amber-surface-border: hsl(var(--amber-surface-border));
 }
 
 body {
@@ -99,6 +115,16 @@ body {
   color: hsl(var(--foreground));
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   min-height: 100vh;
+}
+
+@layer utilities {
+  .hover\:text-amber-text:hover {
+    color: hsl(var(--amber-text-hover));
+  }
+
+  .group:hover .group-hover\:text-amber-text {
+    color: hsl(var(--amber-text-hover));
+  }
 }
 
 /* Custom Scrollbar */

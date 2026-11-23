@@ -89,7 +89,7 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1 flex items-center gap-1.5">
+        <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1 flex items-center gap-1.5">
           <ShieldCheck className="h-3.5 w-3.5" />
           <span>Identity Governance</span>
         </div>
@@ -159,7 +159,7 @@ export default function AdminUsersPage() {
                   <tr key={uid} className="hover:bg-muted/30 transition-colors">
                     <td className="py-3.5 px-4 font-bold text-foreground">
                       <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 rounded-full bg-amber/20 text-amber font-black text-xs flex items-center justify-center shrink-0">
+                        <div className="h-7 w-7 rounded-full bg-amber/20 text-amber-text font-black text-xs flex items-center justify-center shrink-0">
                           {u.name?.charAt(0) || "U"}
                         </div>
                         <div>

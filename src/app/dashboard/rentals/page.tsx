@@ -139,7 +139,7 @@ function CustomerRentalsContent() {
   const getStatusBadge = (status: Booking["status"]) => {
     switch (status) {
       case "Pending":
-        return <Badge variant="secondary" className="bg-amber/15 text-amber border-amber/30 text-[10px]">Pending</Badge>;
+        return <Badge variant="secondary" className="bg-amber/15 text-amber-text border-amber/30 text-[10px]">Pending</Badge>;
       case "Confirmed":
         return <Badge variant="info" className="text-[10px]">Confirmed</Badge>;
       case "Active":
@@ -156,7 +156,7 @@ function CustomerRentalsContent() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
+        <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1">
           Customer Rental Ledger
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
@@ -175,7 +175,7 @@ function CustomerRentalsContent() {
         </div>
       ) : bookings.length === 0 ? (
         <div className="p-12 text-center rounded-2xl border border-dashed border-border bg-card">
-          <div className="h-12 w-12 rounded-full bg-amber/15 text-amber mx-auto flex items-center justify-center mb-3">
+          <div className="h-12 w-12 rounded-full bg-amber/15 text-amber-text mx-auto flex items-center justify-center mb-3">
             <CalendarCheck className="h-6 w-6" />
           </div>
           <h3 className="font-bold text-lg text-foreground">No Rental Bookings Found</h3>
@@ -210,7 +210,7 @@ function CustomerRentalsContent() {
                   <tr key={b._id} className="hover:bg-muted/30 transition-colors">
                     {/* Equipment Name */}
                     <td className="py-3.5 px-4 font-bold text-foreground">
-                      <Link href={`/equipment/${b.equipmentId}`} className="hover:text-amber transition-colors flex items-center gap-2">
+                      <Link href={`/equipment/${b.equipmentId}`} className="hover:text-amber-text-text transition-colors flex items-center gap-2">
                         <EquipmentImage src={b.equipmentImage || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"} alt={b.equipmentTitle} width={48} height={36} className="h-9 w-12 rounded object-cover border border-border shrink-0" />
                         <span className="line-clamp-1 max-w-[200px]">{b.equipmentTitle}</span>
                       </Link>
@@ -280,7 +280,7 @@ function CustomerRentalsContent() {
                         {b.status === "Completed" && (
                           <Link href={`/equipment/${b.equipmentId}`}>
                             <Button size="sm" variant="outline" className="text-[11px] h-7 px-2 gap-1">
-                              <MessageSquare className="h-3 w-3 text-amber" />
+                              <MessageSquare className="h-3 w-3 text-amber-text" />
                               <span>Review</span>
                             </Button>
                           </Link>

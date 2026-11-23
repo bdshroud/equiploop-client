@@ -148,7 +148,7 @@ export function EquipmentCard({
         {/* Rating and Location Header */}
         <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground mb-2">
           <div className="flex items-center gap-1 font-semibold text-foreground">
-            <Star className="h-3.5 w-3.5 fill-amber text-amber" />
+            <Star className="h-3.5 w-3.5 fill-amber text-amber-text" />
             <span>{(item.rating || 5.0).toFixed(1)}</span>
             <span className="text-muted-foreground font-normal">
               ({item.totalReviews || 0})
@@ -167,7 +167,7 @@ export function EquipmentCard({
         <button
           type="button"
           onClick={handleDetailsClick}
-          className="text-left group-hover:text-amber transition-colors"
+          className="text-left group-hover:text-amber-text-text-text transition-colors"
         >
           <h3 className="font-bold text-base leading-snug line-clamp-2 text-foreground">
             {displayTitle}

@@ -32,7 +32,7 @@ export function HowItWorksSection() {
     <section className="py-16 sm:py-20 bg-background transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1.5">
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1.5">
             Operational Workflow
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
@@ -52,12 +52,12 @@ export function HowItWorksSection() {
                 className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card shadow-xs group hover:border-amber/50 hover:shadow-md transition-all duration-300"
               >
                 {/* Step Number Badge */}
-                <div className="absolute -top-3.5 px-2.5 py-0.5 rounded-full bg-graphite dark:bg-amber text-amber dark:text-graphite text-xs font-black shadow-xs">
+                <div className="absolute -top-3.5 px-2.5 py-0.5 rounded-full bg-graphite dark:bg-amber text-amber-text dark:text-graphite text-xs font-black shadow-xs">
                   STEP {s.step}
                 </div>
 
                 {/* Icon */}
-                <div className="mt-3 h-14 w-14 rounded-2xl bg-amber/15 text-amber flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                <div className="mt-3 h-14 w-14 rounded-2xl bg-amber/15 text-amber-text flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
                   <Icon className="h-7 w-7" />
                 </div>
 

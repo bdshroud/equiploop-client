@@ -31,7 +31,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-background py-12 sm:py-16 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
+          <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1">
             Dispatch & Support Desk
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
@@ -47,7 +47,7 @@ export default function ContactPage() {
           <div className="space-y-4">
             <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
               <h2 className="font-bold text-base text-foreground flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-amber" />
+                <MapPin className="h-4 w-4 text-amber-text" />
                 <span>Headquarters</span>
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -59,7 +59,7 @@ export default function ContactPage() {
 
             <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
               <h2 className="font-bold text-base text-foreground flex items-center gap-2">
-                <Phone className="h-4 w-4 text-amber" />
+                <Phone className="h-4 w-4 text-amber-text" />
                 <span>Direct Hotline</span>
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -70,7 +70,7 @@ export default function ContactPage() {
 
             <Card className="p-6 rounded-2xl border-border bg-card shadow-xs space-y-4">
               <h2 className="font-bold text-base text-foreground flex items-center gap-2">
-                <Clock className="h-4 w-4 text-amber" />
+                <Clock className="h-4 w-4 text-amber-text" />
                 <span>Operating Hours</span>
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">

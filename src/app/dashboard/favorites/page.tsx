@@ -48,7 +48,7 @@ export default function FavoritesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1">
+        <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1">
           Saved Favorites Ledger
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
@@ -67,7 +67,7 @@ export default function FavoritesPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="p-12 text-center rounded-2xl border border-dashed border-border bg-card">
-          <div className="h-12 w-12 rounded-full bg-amber/15 text-amber mx-auto flex items-center justify-center mb-3">
+          <div className="h-12 w-12 rounded-full bg-amber/15 text-amber-text mx-auto flex items-center justify-center mb-3">
             <Bookmark className="h-6 w-6" />
           </div>
           <h3 className="font-bold text-lg text-foreground">No Favorite Equipment Saved</h3>
@@ -101,7 +101,7 @@ export default function FavoritesPage() {
                       <EquipmentImage src={item.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=100&q=80"} alt={item.title} width={56} height={40} className="h-10 w-14 rounded-lg object-cover border border-border" />
                     </td>
                     <td className="py-3 px-4 font-bold text-foreground">
-                      <Link href={`/equipment/${item._id}`} className="hover:text-amber transition-colors">
+                      <Link href={`/equipment/${item._id}`} className="hover:text-amber-text-text transition-colors">
                         {item.title}
                       </Link>
                     </td>

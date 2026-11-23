@@ -118,7 +118,7 @@ export default function AdminEquipmentModerationPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-xs font-bold uppercase tracking-wider text-amber mb-1 flex items-center gap-1.5">
+        <div className="text-xs font-bold uppercase tracking-wider text-amber-text mb-1 flex items-center gap-1.5">
           <ShieldCheck className="h-3.5 w-3.5" />
           <span>Fleet Oversight</span>
         </div>
@@ -204,7 +204,7 @@ export default function AdminEquipmentModerationPage() {
                     <Link
                       href={`/equipment/${item._id}`}
                       target="_blank"
-                      className="hover:text-amber transition-colors line-clamp-1"
+                      className="hover:text-amber-text-text transition-colors line-clamp-1"
                     >
                       {item.title}
                     </Link>
@@ -275,7 +275,7 @@ export default function AdminEquipmentModerationPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => openUpdateModal(item)}
-                        className="text-[11px] font-semibold h-7 px-2 hover:border-amber hover:text-amber"
+                        className="text-[11px] font-semibold h-7 px-2 hover:border-amber hover:text-amber-text-text"
                         title="Update Listing"
                       >
                         <Edit className="h-3 w-3 mr-1" />
