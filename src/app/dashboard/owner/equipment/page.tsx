@@ -40,6 +40,7 @@ export default function OwnerEquipmentListPage() {
   const [editPrice, setEditPrice] = React.useState<number>(0);
   const [editQuantity, setEditQuantity] = React.useState<number>(1);
   const [editCategory, setEditCategory] = React.useState("");
+  const [editImage, setEditImage] = React.useState("");
   const [updating, setUpdating] = React.useState(false);
 
   const loadOwnerEquipment = React.useCallback(async () => {
@@ -70,6 +71,7 @@ export default function OwnerEquipmentListPage() {
     setEditPrice(item.rentalPrice || item.pricePerDay || 0);
     setEditQuantity(item.availableQuantity !== undefined ? item.availableQuantity : 1);
     setEditCategory(item.category || "");
+    setEditImage(item.images?.[0] || "");
   };
 
   const handleSaveUpdate = async (e: React.FormEvent) => {
@@ -87,6 +89,7 @@ export default function OwnerEquipmentListPage() {
           pricePerDay: Number(editPrice),
           availableQuantity: Number(editQuantity),
           category: editCategory,
+          images: editImage.trim() ? [editImage.trim()] : editingItem.images,
         }),
       });
       toast.success("Equipment updated successfully");
@@ -339,6 +342,30 @@ export default function OwnerEquipmentListPage() {
                   <option value="Electronics">Electronics</option>
                   <option value="Event Equipment">Event Equipment</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1">
+                  Product Image URL
+                </label>
+                <Input
+                  type="url"
+                  placeholder="https://images.unsplash.com/... or direct image link"
+                  value={editImage}
+                  onChange={(e) => setEditImage(e.target.value)}
+                  className="text-xs"
+                />
+                {editImage && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <img
+                      src={editImage}
+                      alt="Preview"
+                      className="h-10 w-14 object-cover rounded-md border border-border"
+                      onError={(e) => (e.currentTarget.style.display = "none")}
+                    />
+                    <span className="text-[10px] text-muted-foreground truncate">Image preview ready</span>
+                  </div>
+                )}
               </div>
 
               <DialogFooter className="pt-4">

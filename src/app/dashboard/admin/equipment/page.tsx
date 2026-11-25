@@ -39,6 +39,7 @@ export default function AdminEquipmentModerationPage() {
   const [updatePrice, setUpdatePrice] = React.useState<number>(0);
   const [updateQuantity, setUpdateQuantity] = React.useState<number>(1);
   const [updateStatus, setUpdateStatus] = React.useState<string>("Approved");
+  const [updateImage, setUpdateImage] = React.useState<string>("");
   const [updating, setUpdating] = React.useState(false);
 
   const loadEquipment = React.useCallback(async () => {
@@ -91,6 +92,7 @@ export default function AdminEquipmentModerationPage() {
     setUpdatePrice(item.pricePerDay);
     setUpdateQuantity(item.availableQuantity || 1);
     setUpdateStatus(item.status || "Approved");
+    setUpdateImage(item.images?.[0] || "");
   };
 
   const handleSaveUpdate = async () => {
@@ -101,8 +103,10 @@ export default function AdminEquipmentModerationPage() {
         method: "PUT",
         body: JSON.stringify({
           pricePerDay: Number(updatePrice),
+          rentalPrice: Number(updatePrice),
           availableQuantity: Number(updateQuantity),
           status: updateStatus,
+          images: updateImage.trim() ? [updateImage.trim()] : editingItem.images,
         }),
       });
       toast.success("Equipment updated successfully");
@@ -341,6 +345,27 @@ export default function AdminEquipmentModerationPage() {
                 <option value="Pending">Pending</option>
                 <option value="Rejected">Rejected</option>
               </select>
+            </div>
+            <div>
+              <label className="font-semibold block mb-1">Product Image URL</label>
+              <Input
+                type="url"
+                placeholder="https://images.unsplash.com/... or direct image link"
+                value={updateImage}
+                onChange={(e) => setUpdateImage(e.target.value)}
+                className="text-xs h-9"
+              />
+              {updateImage && (
+                <div className="mt-2 flex items-center gap-2">
+                  <img
+                    src={updateImage}
+                    alt="Preview"
+                    className="h-10 w-14 object-cover rounded-md border border-border"
+                    onError={(e) => (e.currentTarget.style.display = "none")}
+                  />
+                  <span className="text-[10px] text-muted-foreground truncate">Image preview ready</span>
+                </div>
+              )}
             </div>
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
